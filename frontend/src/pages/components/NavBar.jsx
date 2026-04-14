@@ -1,6 +1,24 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
 
 export default function NavBar({ cartCount = 0 }) {
+    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
+
+    const handleSearch = () => {
+        const q = searchQuery.trim();
+        if (q) {
+            navigate(`/search?q=${encodeURIComponent(q)}`);
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
     return (
         <header className="bg-white sticky top-0 z-50 px-10">
             <div className="max-w-7xl mx-auto px-4">
@@ -16,7 +34,6 @@ export default function NavBar({ cartCount = 0 }) {
                             />
                             <span className="text-sm font-semibold italic text-black tracking-tight">Flipkart</span>
                         </a>
-                        {/* Travel REMOVED */}
                     </div>
 
                     {/* Right: Location */}
@@ -35,9 +52,17 @@ export default function NavBar({ cartCount = 0 }) {
                     {/* Search - takes most space */}
                     <div className="flex-1">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#717478]" size={20} strokeWidth={2.2} />
+                            <button
+                                onClick={handleSearch}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#717478] hover:text-[#2a55e5] transition-colors"
+                            >
+                                <Search size={20} strokeWidth={2.2} />
+                            </button>
                             <input
                                 type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={handleKeyDown}
                                 placeholder="Search for Products, Brands and More"
                                 className="w-full h-11 pl-10 pr-4 text-sm bg-white border border-[#2a55e5] rounded-lg outline-none placeholder-[#717478] focus:shadow-[0_0_0_1px_#2a55e5]"
                             />

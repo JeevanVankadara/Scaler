@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import BestGadgets from './BestGadgets';
 
 export default function CategoryContent({ category }) {
     // Posters from /public/posters - matches your folder
@@ -122,53 +123,62 @@ export default function CategoryContent({ category }) {
     }
 
     return (
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div>
             {/* Banner Carousel */}
-            <div
-                className="relative"
-                onMouseEnter={() => setIsHover(true)}
-                onMouseLeave={handleMouseLeave}
-            >
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div
-                    ref={containerRef}
-                    className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 pt-4 pb-2
-                     [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                    style={{ cursor: 'grab' }}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
+                    className="relative"
+                    onMouseEnter={() => setIsHover(true)}
+                    onMouseLeave={handleMouseLeave}
                 >
-                    {posters.map((src, i) => (
-                        <div
-                            key={i}
-                            className="snap-start shrink-0 cursor-pointer"
-                            style={{ width: 'calc((100% - 2rem) / 2.35)' }}
-                        >
-                            <img
-                                src={src}
-                                alt={`banner-${i}`}
-                                className="w-full h-56 object-cover rounded-xl select-none pointer-events-none"
-                                draggable={false}
-                            />
-                        </div>
-                    ))}
-                </div>
+                    <div
+                        ref={containerRef}
+                        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 pt-4 pb-2
+                         [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        style={{ cursor: 'grab' }}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                    >
+                        {posters.map((src, i) => (
+                            <div
+                                key={i}
+                                className="snap-start shrink-0 cursor-pointer"
+                                style={{ width: 'calc((100% - 2rem) / 2.35)' }}
+                            >
+                                <img
+                                    src={src}
+                                    alt={`banner-${i}`}
+                                    className="w-full h-56 object-cover rounded-xl select-none pointer-events-none"
+                                    draggable={false}
+                                />
+                            </div>
+                        ))}
+                    </div>
 
-                {/* Navigation dots */}
-                <div className="flex justify-center items-center gap-1.5 pb-3 pt-1">
-                    {posters.map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => scrollToSlide(i)}
-                            className={`transition-all duration-300 h-1.5 rounded-full ${current === i
-                                    ? 'w-5 bg-[#717478]'
-                                    : 'w-1.5 bg-[#d1d5db] hover:bg-gray-400'
-                                }`}
-                            aria-label={`Go to slide ${i + 1}`}
-                        />
-                    ))}
+                    {/* Navigation dots */}
+                    <div className="flex justify-center items-center gap-1.5 pb-3 pt-1">
+                        {posters.map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => scrollToSlide(i)}
+                                className={`transition-all duration-300 h-1.5 rounded-full ${current === i
+                                        ? 'w-5 bg-[#717478]'
+                                        : 'w-1.5 bg-[#d1d5db] hover:bg-gray-400'
+                                    }`}
+                                aria-label={`Go to slide ${i + 1}`}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
+
+            {/* Product Sections */}
+            <BestGadgets title="Best Gadgets & Appliances" bgColor="#ede7f6" />
+            <BestGadgets title="Top Electronics" bgColor="#e8f5e9" />
+            <BestGadgets title="Fashion Top Deals" bgColor="#fff3e0" />
+            <BestGadgets title="Beauty, Food & More" bgColor="#fce4ec" />
+            <BestGadgets title="Home & Furniture" bgColor="#e3f2fd" />
         </div>
     );
 }
