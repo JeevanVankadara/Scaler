@@ -71,21 +71,32 @@ export default function NavBar({ cartCount = 0 }) {
 
                     {/* Right actions */}
                     <div className="flex items-center gap-7 shrink-0">
-                        {/* Login */}
+                        {/* User Account */}
                         <div className="relative group">
                             <button className="flex items-center gap-2">
-                                <img src="/login-icon.svg" alt="login" className="w-6 h-6" />
-                                <span className="text-sm text-[#212121]">Login</span>
-                                <ChevronDown size={16} className="text-[#717478] group-hover:rotate-180 transition-transform" />
+                                <img src="/login-icon.svg" alt="user" className="w-6 h-6" />
+                                <span className="text-sm text-[#212121]">Dheeraj</span>
+                                <ChevronDown size={16} className="text-[#717478] group-hover:rotate-180 transition-transform duration-200" />
                             </button>
                             {/* dropdown */}
-                            <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded shadow-[0_4px_16px_rgba(0,0,0,0.15)] border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                <div className="p-4 text-sm border-b">
-                                    New customer? <span className="text-[#2a55e5] font-medium cursor-pointer">Sign Up</span>
+                            <div className="absolute top-full right-0 mt-1 w-56 bg-white rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-[#e0e0e0] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <div className="px-4 py-3 border-b border-[#f0f0f0]">
+                                    <p className="text-sm font-medium text-[#212121]">Your Account</p>
                                 </div>
-                                <div className="p-2 text-sm">
-                                    <div className="px-2 py-2 hover:bg-gray-50 cursor-pointer">My Profile</div>
-                                    <div className="px-2 py-2 hover:bg-gray-50 cursor-pointer">Orders</div>
+                                <div className="py-1">
+                                    <a href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
+                                        <img src="/login-icon.svg" alt="profile" className="w-5 h-5 opacity-70" />
+                                        My Profile
+                                    </a>
+                                    <a href="/orders" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
+                                        <img src="/orders-icon.svg" alt="orders" className="w-5 h-5 opacity-70" />
+                                        My Orders
+                                    </a>
+                                    <div className="border-t border-[#f0f0f0] my-1"></div>
+                                    <a href="/logout" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
+                                        <img src="/Logout-icon.svg" alt="logout" className="w-5 h-5 opacity-70" />
+                                        Logout
+                                    </a>
                                 </div>
                             </div>
                         </div>
