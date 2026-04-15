@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BestGadgets from './BestGadgets';
+import { cachedFetch } from '../../utils/apiCache';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // ── Client-side cache: survives across navigations ──
-const clientCache = {
-    home: null,       // { banners, homeSections }
-    categories: {},   // { [categoryId]: products[] }
-};
+// Removed in favor of apiCache
+
 
 const categoryMeta = {
     fashion: { name: 'Fashion', bg: '#fff3e0' },
@@ -49,21 +48,12 @@ export default function CategoryContent({ category }) {
     useEffect(() => {
         if (category !== 'for-you') return;
 
-        // Return cached data instantly if available
-        if (clientCache.home) {
-            setBanners(clientCache.home.banners);
-            setHomeSections(clientCache.home.homeSections);
-            return;
-        }
-
         setHomeLoading(true);
-        fetch(`${API}/products/home`)
-            .then((r) => r.json())
+        cachedFetch(`${API}/products/home`)
             .then((data) => {
                 if (data.success) {
                     const b = data.banners || [];
                     const s = data.homeSections || [];
-                    clientCache.home = { banners: b, homeSections: s };
                     setBanners(b);
                     setHomeSections(s);
                 }
@@ -78,17 +68,10 @@ export default function CategoryContent({ category }) {
     useEffect(() => {
         if (category === 'for-you') return;
 
-        if (clientCache.categories[category]) {
-            setCategoryProducts(clientCache.categories[category]);
-            return;
-        }
-
         setCatLoading(true);
-        fetch(`${API}/products/category/${category}`)
-            .then((r) => r.json())
+        cachedFetch(`${API}/products/category/${category}`)
             .then((data) => {
                 if (data.success) {
-                    clientCache.categories[category] = data.products || [];
                     setCategoryProducts(data.products || []);
                 }
             })
@@ -178,8 +161,17 @@ export default function CategoryContent({ category }) {
 
         if (catLoading) {
             return (
-                <div className="bg-white rounded-sm shadow-sm min-h-64 flex items-center justify-center">
-                    <div className="w-8 h-8 border-4 border-[#2874f0] border-t-transparent rounded-full animate-spin" />
+                <div className="space-y-4">
+                    {[1, 2].map((i) => (
+                        <div key={i} className="bg-white rounded-xl shadow-sm p-4 animate-pulse">
+                            <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                {[1, 2, 3, 4].map((j) => (
+                                    <div key={j} className="h-40 bg-gray-100 rounded-lg"></div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             );
         }
@@ -254,6 +246,7 @@ export default function CategoryContent({ category }) {
                                 <img
                                     src={src}
                                     alt={`banner-${i}`}
+                                    loading="lazy"
                                     className="w-full h-32 sm:h-48 lg:h-56 object-cover rounded-xl select-none pointer-events-none"
                                     draggable={false}
                                 />
@@ -277,8 +270,15 @@ export default function CategoryContent({ category }) {
 
             {/* Product Sections from API */}
             {homeLoading ? (
-                <div className="flex justify-center py-10">
-                    <div className="w-8 h-8 border-4 border-[#2874f0] border-t-transparent rounded-full animate-spin" />
+                <div className="space-y-4 mt-6">
+                    <div className="bg-white rounded-xl shadow-sm p-4 animate-pulse">
+                        <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            {[1, 2, 3, 4].map((j) => (
+                                <div key={j} className="h-40 bg-gray-100 rounded-lg"></div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             ) : homeSections.length > 0 ? (
                 homeSections.map((section, idx) => (

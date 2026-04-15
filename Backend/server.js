@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -11,6 +12,9 @@ const categoriesRouter = require('./routes/categories');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Gzip compression — reduces response sizes ~70%
+app.use(compression());
 
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',

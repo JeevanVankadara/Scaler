@@ -11,35 +11,35 @@ DROP TABLE IF EXISTS categories CASCADE;
 DROP FUNCTION IF EXISTS update_updated_at CASCADE;
 
 -- ══════════════════════════════════════
--- 1. CATEGORIES (alphabetical by name)
+-- 1. CATEGORIES (alphabetical by label)
 -- ══════════════════════════════════════
 CREATE TABLE categories (
     id          VARCHAR(50) PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL,
-    image       TEXT DEFAULT '',
+    label       VARCHAR(100) NOT NULL,
+    icon        TEXT DEFAULT '',
     created_at  TIMESTAMP DEFAULT NOW()
 );
 
 -- ══════════════════════════════════════
--- 2. PRODUCTS (price ASC per category)
+-- 2. PRODUCTS
 -- ══════════════════════════════════════
 CREATE TABLE products (
     id              VARCHAR(50) PRIMARY KEY,
     title           VARCHAR(500) NOT NULL,
     brand           VARCHAR(100) NOT NULL DEFAULT '',
     category        VARCHAR(100) NOT NULL DEFAULT '',
-    subcategory     VARCHAR(100) NOT NULL DEFAULT '',
     category_id     VARCHAR(50) REFERENCES categories(id) ON DELETE SET NULL,
     price           NUMERIC(10,2) NOT NULL CHECK (price >= 0),
     original_price  NUMERIC(10,2) DEFAULT 0,
-    discount        INTEGER DEFAULT 0 CHECK (discount >= 0 AND discount <= 100),
+    discount_label  VARCHAR(50) DEFAULT '',
     rating          NUMERIC(2,1) DEFAULT 0 CHECK (rating >= 0 AND rating <= 5),
-    rating_count    INTEGER DEFAULT 0 CHECK (rating_count >= 0),
+    review_count    INTEGER DEFAULT 0 CHECK (review_count >= 0),
+    reviews         VARCHAR(50) DEFAULT '',
+    f_assured       BOOLEAN DEFAULT FALSE,
     stock           INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
     images          TEXT[] DEFAULT '{}',
     highlights      TEXT[] DEFAULT '{}',
-    specifications  JSONB DEFAULT '{}',
-    description     TEXT DEFAULT '',
+    description     TEXT[] DEFAULT '{}',
     created_at      TIMESTAMP DEFAULT NOW(),
     updated_at      TIMESTAMP DEFAULT NOW()
 );
@@ -61,6 +61,8 @@ CREATE TABLE home_sections (
     id          SERIAL PRIMARY KEY,
     title       VARCHAR(200) NOT NULL,
     type        VARCHAR(50) DEFAULT 'product',
+    bg_color    VARCHAR(20) DEFAULT '#f5f5f5',
+    category_id VARCHAR(50) DEFAULT '',
     product_ids TEXT[] DEFAULT '{}',
     created_at  TIMESTAMP DEFAULT NOW()
 );
@@ -85,13 +87,15 @@ CREATE TABLE cart_items (
 -- ★ Category page: products sorted by price — single index scan
 CREATE INDEX idx_products_category_price ON products(category_id, price ASC);
 
+-- ★ Category page: products sorted by rating — for "top rated" queries
+CREATE INDEX idx_products_category_rating ON products(category_id, rating DESC);
+
 CREATE INDEX idx_products_brand ON products(brand);
 CREATE INDEX idx_products_price ON products(price);
-CREATE INDEX idx_products_subcategory ON products(subcategory);
 
 -- Full-text search GIN index
 CREATE INDEX idx_products_search ON products
-    USING GIN(to_tsvector('english', title || ' ' || brand || ' ' || category || ' ' || subcategory));
+    USING GIN(to_tsvector('english', title || ' ' || brand || ' ' || category));
 
 -- Cart per user
 CREATE INDEX idx_cart_user ON cart_items(user_id);

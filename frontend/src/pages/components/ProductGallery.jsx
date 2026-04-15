@@ -26,6 +26,7 @@ export default function ProductGallery({ images, productName }) {
           <img
             src={activeImage}
             alt={productName}
+            loading="lazy"
             className="max-h-[380px] md:max-h-[430px] w-full object-contain"
           />
         </div>
@@ -56,7 +57,7 @@ export default function ProductGallery({ images, productName }) {
                   }`}
                   aria-label={`Show image ${index + 1}`}
                 >
-                  <img src={image} alt={`${productName} thumbnail ${index + 1}`} className="w-full h-full object-contain" />
+                  <img src={image} alt={`${productName} thumbnail ${index + 1}`} loading="lazy" className="w-full h-full object-contain" />
                 </button>
               );
             })}

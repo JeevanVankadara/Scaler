@@ -19,13 +19,13 @@ async function seed() {
 
         // ── 1. Categories (alphabetically sorted) ──
         const categories = (data.categories || []).sort((a, b) =>
-            (a.name || '').localeCompare(b.name || '')
+            (a.label || '').localeCompare(b.label || '')
         );
 
         for (const cat of categories) {
             await client.query(
-                'INSERT INTO categories (id, name, image) VALUES (\$1, \$2, \$3)',
-                [cat.id, cat.name || '', cat.image || '']
+                'INSERT INTO categories (id, label, icon) VALUES ($1, $2, $3)',
+                [cat.id, cat.label || '', cat.icon || '']
             );
         }
         console.log(`✅ ${categories.length} categories seeded (alphabetical order)`);
@@ -40,27 +40,27 @@ async function seed() {
         for (const p of products) {
             await client.query(
                 `INSERT INTO products
-         (id, title, brand, category, subcategory, category_id,
-          price, original_price, discount, rating, rating_count,
-          stock, images, highlights, specifications, description)
-         VALUES (\$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12,\$13,\$14,\$15,\$16)`,
+         (id, title, brand, category, category_id,
+          price, original_price, discount_label, rating, review_count, reviews, f_assured,
+          stock, images, highlights, description)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
                 [
                     String(p.id),
                     p.title || '',
                     p.brand || '',
                     p.category || '',
-                    p.subcategory || '',
                     p.categoryId || null,
                     p.price || 0,
                     p.originalPrice || p.price || 0,
-                    p.discount || 0,
+                    p.discountLabel || '',
                     p.rating || 0,
-                    p.ratingCount || p.reviewCount || 0,
+                    p.reviewCount || 0,
+                    p.reviews || '',
+                    p.fAssured || false,
                     p.stock != null ? p.stock : 10,
                     p.images || [],
                     p.highlights || [],
-                    JSON.stringify(p.specifications || {}),
-                    p.description || '',
+                    p.description || [],
                 ]
             );
         }
@@ -79,12 +79,18 @@ async function seed() {
         }
         console.log(`✅ ${banners.length} banners seeded`);
 
-        // ── 4. Home Sections ──
+        // ── 4. Home Sections (now with bg_color and category_id) ──
         const sections = data.homeSections || [];
         for (const s of sections) {
             await client.query(
-                'INSERT INTO home_sections (title, type, product_ids) VALUES (\$1, \$2, \$3)',
-                [s.title || '', s.type || 'product', s.productIds || []]
+                'INSERT INTO home_sections (title, type, bg_color, category_id, product_ids) VALUES ($1, $2, $3, $4, $5)',
+                [
+                    s.title || '',
+                    s.type || 'product',
+                    s.bgColor || '#f5f5f5',
+                    s.categoryId || '',
+                    s.productIds || [],
+                ]
             );
         }
         console.log(`✅ ${sections.length} home sections seeded`);

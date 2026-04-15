@@ -8,6 +8,7 @@ import ProductGallery from './components/ProductGallery';
 import StickyBuyBar from './components/StickyBuyBar';
 import SimilarProducts from './components/SimilarProducts';
 import OutOfStockPopup from './components/OutOfStockPopup';
+import { cachedFetch } from '../utils/apiCache';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -28,12 +29,10 @@ export default function ProductDetails() {
     useEffect(() => {
         if (!id) return;
         setLoading(true);
-        fetch(`${API}/products/${id}`)
-            .then((r) => r.json())
+        cachedFetch(`${API}/products/${id}`)
             .then((data) => {
                 if (data.success && data.product) {
                     setProduct(data.product);
-
                 }
             })
             .catch(() => {})
@@ -70,9 +69,17 @@ export default function ProductDetails() {
         return (
             <div className="min-h-screen bg-[#f1f3f6] flex flex-col">
                 <NavBar />
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="w-8 h-8 border-4 border-[#2874f0] border-t-transparent rounded-full animate-spin" />
-                </div>
+                <main className="flex-1 max-w-[1440px] mx-auto w-full px-3 py-3 lg:px-4 lg:py-5">
+                    <div className="bg-white border border-[#ebebeb] p-6 flex flex-col lg:flex-row gap-8 animate-pulse">
+                        <div className="flex-1 h-[400px] bg-gray-200 rounded-lg"></div>
+                        <div className="flex-1 space-y-4">
+                            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+                            <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+                            <div className="h-10 bg-gray-200 rounded w-1/2"></div>
+                            <div className="h-32 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </main>
             </div>
         );
     }

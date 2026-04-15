@@ -5,6 +5,7 @@ import ProductFilters from './components/ProductFilters';
 import ProductCard from './components/ProductCard';
 import { ChevronRight } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { cachedFetch } from '../utils/apiCache';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -36,8 +37,7 @@ export default function SearchResults() {
     if (query) params.set('q', query);
     if (categoryParam) params.set('category', categoryParam);
 
-    fetch(`${API}/products?${params.toString()}`)
-      .then((r) => r.json())
+    cachedFetch(`${API}/products?${params.toString()}`)
       .then((data) => {
         if (data.success) setAllProducts(data.products);
       })
@@ -108,8 +108,29 @@ export default function SearchResults() {
 
             <div>
               {loading ? (
-                <div className="flex items-center justify-center py-20">
-                  <div className="w-8 h-8 border-4 border-[#2874f0] border-t-transparent rounded-full animate-spin" />
+                <div>
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex flex-col md:flex-row gap-4 md:gap-6 p-4 border-b animate-pulse">
+                      <div className="w-full md:w-[180px] shrink-0 bg-gray-100 rounded-lg h-[180px] md:h-[200px]" />
+                      <div className="flex-1 space-y-3">
+                        <div className="h-5 bg-gray-200 rounded w-3/4" />
+                        <div className="flex items-center gap-2">
+                          <div className="h-5 w-12 bg-gray-200 rounded" />
+                          <div className="h-4 w-24 bg-gray-100 rounded" />
+                        </div>
+                        <div className="space-y-2 hidden md:block">
+                          <div className="h-3 bg-gray-100 rounded w-5/6" />
+                          <div className="h-3 bg-gray-100 rounded w-4/6" />
+                          <div className="h-3 bg-gray-100 rounded w-3/6" />
+                        </div>
+                      </div>
+                      <div className="w-full md:w-[170px] shrink-0 space-y-2">
+                        <div className="h-6 bg-gray-200 rounded w-24" />
+                        <div className="h-4 bg-gray-100 rounded w-20" />
+                        <div className="h-3 bg-gray-100 rounded w-16" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-20 text-[#878787]">

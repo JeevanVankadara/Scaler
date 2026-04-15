@@ -29,43 +29,61 @@ function invalidateCache() {
 // ══════════════════════════════════════
 
 async function getProducts() {
+    const cached = getCached('all_products');
+    if (cached) return cached;
     const { rows } = await pool.query(
         'SELECT * FROM products ORDER BY category, price ASC'
     );
-    return rows.map(formatProduct);
+    const products = rows.map(formatProduct);
+    setCache('all_products', products);
+    return products;
 }
 
 async function getProductById(id) {
+    const cacheKey = `product_${id}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
     const { rows } = await pool.query(
         'SELECT * FROM products WHERE id = $1',
         [String(id)]
     );
-    return rows[0] ? formatProduct(rows[0]) : null;
+    const product = rows[0] ? formatProduct(rows[0]) : null;
+    if (product) setCache(cacheKey, product);
+    return product;
 }
 
 async function getProductsByIds(ids) {
     if (!ids || ids.length === 0) return [];
+    const cacheKey = `batch_${ids.sort().join(',')}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
     const placeholders = ids.map((_, i) => `$${i + 1}`).join(',');
     const { rows } = await pool.query(
         `SELECT * FROM products WHERE id IN (${placeholders}) ORDER BY price ASC`,
         ids.map(String)
     );
-    return rows.map(formatProduct);
+    const products = rows.map(formatProduct);
+    setCache(cacheKey, products);
+    return products;
 }
 
 async function searchProducts({ q, category, minPrice, maxPrice, brand, sort }) {
+    // Build a cache key from all filter params
+    const cacheKey = `search_${q || ''}_${category || ''}_${minPrice || ''}_${maxPrice || ''}_${brand || ''}_${sort || ''}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     let query = 'SELECT * FROM products WHERE 1=1';
     const params = [];
     let idx = 1;
 
     if (q) {
         query += ` AND (
-      to_tsvector('english', title || ' ' || brand || ' ' || category || ' ' || subcategory)
+      to_tsvector('english', title || ' ' || brand || ' ' || category)
       @@ plainto_tsquery('english', $${idx})
       OR title ILIKE $${idx + 1}
       OR brand ILIKE $${idx + 1}
       OR category ILIKE $${idx + 1}
-      OR subcategory ILIKE $${idx + 1}
     )`;
         params.push(q, `%${q}%`);
         idx += 2;
@@ -101,20 +119,28 @@ async function searchProducts({ q, category, minPrice, maxPrice, brand, sort }) 
     else query += ' ORDER BY price ASC';
 
     const { rows } = await pool.query(query, params);
-    return rows.map(formatProduct);
+    const products = rows.map(formatProduct);
+    setCache(cacheKey, products);
+    return products;
 }
 
 async function getSimilarProducts(productId) {
+    const cacheKey = `similar_${productId}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     const product = await getProductById(productId);
     if (!product) return [];
 
     const { rows } = await pool.query(
         `SELECT * FROM products
-     WHERE id != $1 AND (category = $2 OR subcategory = $3)
+     WHERE id != $1 AND category = $2
      ORDER BY price ASC LIMIT 8`,
-        [String(productId), product.category, product.subcategory]
+        [String(productId), product.category]
     );
-    return rows.map(formatProduct);
+    const products = rows.map(formatProduct);
+    setCache(cacheKey, products);
+    return products;
 }
 
 // ★ Uses idx_products_category_price — single index scan
@@ -133,19 +159,25 @@ async function getProductsByCategory(categoryId) {
 
 async function getSuggestions(query, limit = 8) {
     if (!query) return [];
+    const cacheKey = `suggest_${query}_${limit}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     const { rows } = await pool.query(
         `SELECT id, title, category, images[1] AS image
      FROM products
-     WHERE title ILIKE $1 OR brand ILIKE $1 OR category ILIKE $1 OR subcategory ILIKE $1
+     WHERE title ILIKE $1 OR brand ILIKE $1 OR category ILIKE $1
      ORDER BY price ASC LIMIT $2`,
         [`%${query}%`, limit]
     );
-    return rows.map((r) => ({
+    const suggestions = rows.map((r) => ({
         id: r.id,
         title: r.title,
         category: r.category,
         image: r.image || '',
     }));
+    setCache(cacheKey, suggestions);
+    return suggestions;
 }
 
 // ══════════════════════════════════════
@@ -155,7 +187,7 @@ async function getSuggestions(query, limit = 8) {
 async function getCategories() {
     const cached = getCached('categories');
     if (cached) return cached;
-    const { rows } = await pool.query('SELECT * FROM categories ORDER BY name ASC');
+    const { rows } = await pool.query('SELECT * FROM categories ORDER BY label ASC');
     setCache('categories', rows);
     return rows;
 }
@@ -177,21 +209,6 @@ async function getHomeSections() {
     const { rows: sections } = await pool.query(
         'SELECT * FROM home_sections ORDER BY id ASC'
     );
-
-    // Map category → bgColor (matching the original data.json)
-    const categoryColors = {
-        electronics: '#ede7f6',
-        mobiles: '#e8f5e9',
-        fashion: '#fff3e0',
-        beauty: '#fce4ec',
-        home: '#e3f2fd',
-        appliances: '#e0f2f1',
-        toys: '#fff8e1',
-        food: '#fce4ec',
-        sports: '#e8f5e9',
-        books: '#f3e5f5',
-        furniture: '#e3f2fd',
-    };
 
     // ── Batch: collect ALL product IDs across all sections into one query ──
     const allIds = new Set();
@@ -222,16 +239,13 @@ async function getHomeSections() {
             .filter(Boolean)
             .sort((a, b) => a.price - b.price);
 
-        const categoryId = products.length > 0 ? products[0].categoryId : '';
-        const bgColor = categoryColors[categoryId] || '#f5f5f5';
-
         return {
             id: section.id,
             title: section.title,
             type: section.type,
             productIds: pIds,
-            categoryId,
-            bgColor,
+            categoryId: section.category_id || '',
+            bgColor: section.bg_color || '#f5f5f5',
             products,
         };
     });
@@ -360,68 +374,27 @@ async function createOrder(shippingAddress, cartItems) {
 // FORMAT HELPERS
 // ══════════════════════════════════════
 
-// DB stores description as TEXT; data.json had it as an array of paragraphs.
-// The seed wrote JS arrays into a TEXT column, producing PostgreSQL array-literal
-// strings like: {"paragraph 1","paragraph 2"}
-// This parses them back into a JS array.
-function parseDescription(raw) {
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw;
-
-    const str = String(raw).trim();
-
-    // PostgreSQL array literal: {"str1","str2","str3"}
-    if (str.startsWith('{') && str.endsWith('}')) {
-        try {
-            // Convert PG array literal to JSON array: {"a","b"} → ["a","b"]
-            const jsonStr = '[' + str.slice(1, -1) + ']';
-            const parsed = JSON.parse(jsonStr);
-            if (Array.isArray(parsed)) return parsed;
-        } catch {
-            // Fallback: split by '","' pattern
-            const inner = str.slice(1, -1);
-            return inner
-                .split('","')
-                .map((s) => s.replace(/^"|"$/g, ''));
-        }
-    }
-
-    // Plain string — wrap in array
-    return str ? [str] : [];
-}
 function formatProduct(row) {
     const price = parseFloat(row.price);
     const originalPrice = parseFloat(row.original_price) || price;
-    const discountPct = originalPrice > 0
-        ? Math.round(((originalPrice - price) / originalPrice) * 100)
-        : (row.discount || 0);
 
     return {
         id: row.id,
         title: row.title,
         brand: row.brand,
         category: row.category,
-        subcategory: row.subcategory,
         categoryId: row.category_id,
         price,
         originalPrice,
-        discount: discountPct,
-        discountLabel: discountPct > 0 ? `${discountPct}% off` : '',
-        rating: parseFloat(row.rating),
-        ratingCount: row.rating_count,
-        reviewCount: row.rating_count,
-        reviews: row.rating_count
-            ? `${row.rating_count.toLocaleString('en-IN')} Ratings`
-            : '0 Ratings',
-        stock: row.stock,
+        discountLabel: row.discount_label || '',
+        rating: parseFloat(row.rating) || 0,
+        reviewCount: row.review_count || 0,
+        reviews: row.reviews || '',
+        stock: row.stock || 0,
         images: row.images || [],
         highlights: row.highlights || [],
-        specifications: row.specifications || {},
-        description: parseDescription(row.description),
-        // Fields the frontend uses but the DB doesn't store — provide safe defaults
-        seller: row.seller || row.brand || 'Flipkart Seller',
-        fAssured: true,
-        exchangeValue: 0,
+        description: row.description || [],
+        fAssured: row.f_assured || false,
     };
 }
 

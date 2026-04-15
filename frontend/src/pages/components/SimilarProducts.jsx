@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cachedFetch } from '../../utils/apiCache';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -9,8 +10,7 @@ export default function SimilarProducts({ productId }) {
 
   useEffect(() => {
     if (!productId) return;
-    fetch(`${API}/products/similar/${productId}`)
-      .then((r) => r.json())
+    cachedFetch(`${API}/products/similar/${productId}`)
       .then((data) => {
         if (data.success) setProducts(data.products.slice(0, 4));
       })
