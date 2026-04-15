@@ -1,5 +1,6 @@
-import { Star } from 'lucide-react';
+import { Star, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 
 const assuredBadge = 'https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png';
 
@@ -9,6 +10,8 @@ function formatPrice(value) {
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
+  const { toggleWishlist, isInWishlist } = useCart();
+  const wishlisted = isInWishlist(product.id);
 
   const handleClick = () => {
     navigate(`/product/${product.id}`);
@@ -20,6 +23,13 @@ export default function ProductCard({ product }) {
       className="flex flex-col md:flex-row gap-4 md:gap-6 p-4 border-b hover:shadow-sm transition-shadow bg-white cursor-pointer"
     >
       <div className="w-full md:w-[180px] shrink-0 relative flex justify-center bg-[#f8f8f8] md:bg-transparent rounded-lg md:rounded-none p-4 md:p-0">
+        <button
+          onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
+          className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white shadow-sm hover:shadow-md transition-shadow"
+          aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+        >
+          <Heart size={18} className={wishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'} />
+        </button>
         <img
           src={product.images?.[0] || product.image || '/product-photos/earphones.webp'}
           alt={product.title}

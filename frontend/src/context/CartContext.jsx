@@ -5,6 +5,16 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CART_KEY = 'flipkart_cart';
 const ORDERS_KEY = 'flipkart_orders';
+const WISHLIST_KEY = 'flipkart_wishlist';
+const PROFILE_KEY = 'flipkart_profile';
+
+const DEFAULT_PROFILE = {
+    firstName: 'Jeevan',
+    lastName: '',
+    gender: '',
+    email: 'jeevanv1997@gmail.com',
+    mobile: '9618006235',
+};
 
 function loadJSON(key, fallback = []) {
     try {
@@ -18,6 +28,16 @@ function loadJSON(key, fallback = []) {
 export function CartProvider({ children }) {
     const [cartItems, setCartItems] = useState(() => loadJSON(CART_KEY));
     const [orders, setOrders] = useState(() => loadJSON(ORDERS_KEY));
+    const [wishlistIds, setWishlistIds] = useState(() => loadJSON(WISHLIST_KEY));
+    const [profile, setProfile] = useState(() => {
+        try {
+            const raw = localStorage.getItem(PROFILE_KEY);
+            if (raw) {
+                return { ...DEFAULT_PROFILE, ...JSON.parse(raw) };
+            }
+            return DEFAULT_PROFILE;
+        } catch { return DEFAULT_PROFILE; }
+    });
 
     useEffect(() => {
         localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
@@ -26,6 +46,21 @@ export function CartProvider({ children }) {
     useEffect(() => {
         localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
     }, [orders]);
+
+    useEffect(() => {
+        localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlistIds));
+    }, [wishlistIds]);
+
+    useEffect(() => {
+        // Only persist when profile has meaningful data
+        if (profile.firstName || profile.email || profile.mobile) {
+            localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+        }
+    }, [profile]);
+
+    const updateProfile = useCallback((updates) => {
+        setProfile((prev) => ({ ...prev, ...updates }));
+    }, []);
 
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -115,17 +150,47 @@ export function CartProvider({ children }) {
         return null;
     }, [cartItems, clearCart]);
 
+    const toggleWishlist = useCallback((productId) => {
+        const pid = String(productId);
+        setWishlistIds((prev) => {
+            if (prev.includes(pid)) return prev.filter((id) => id !== pid);
+            return [...prev, pid];
+        });
+    }, []);
+
+    const logout = useCallback(() => {
+        setCartItems([]);
+        setOrders([]);
+        setWishlistIds([]);
+        setProfile(DEFAULT_PROFILE);
+        localStorage.removeItem(CART_KEY);
+        localStorage.removeItem(ORDERS_KEY);
+        localStorage.removeItem(WISHLIST_KEY);
+        localStorage.removeItem(PROFILE_KEY);
+        localStorage.removeItem('flipkart_user_name'); // Clear if still exists
+    }, []);
+
+    const isInWishlist = useCallback((productId) => {
+        return wishlistIds.includes(String(productId));
+    }, [wishlistIds]);
+
     return (
         <CartContext.Provider
             value={{
                 cartItems,
                 cartCount,
                 orders,
+                wishlistIds,
+                profile,
                 addToCart,
                 updateQuantity,
                 removeFromCart,
                 clearCart,
                 placeOrder,
+                toggleWishlist,
+                isInWishlist,
+                updateProfile,
+                logout,
             }}
         >
             {children}

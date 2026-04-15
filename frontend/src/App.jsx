@@ -7,6 +7,8 @@ import Orders from './pages/Orders';
 import ProductDetails from './pages/ProductDetails';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
+import Wishlist from './pages/Wishlist';
+import Profile from './pages/Profile';
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>

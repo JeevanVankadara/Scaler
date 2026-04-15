@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, MapPin, Star, Truck } from 'lucide-react';
+import { ChevronDown, ChevronRight, Heart, MapPin, Star, Truck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
@@ -19,7 +19,7 @@ function formatPrice(value) {
 export default function ProductDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { addToCart } = useCart();
+    const { addToCart, toggleWishlist, isInWishlist } = useCart();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -142,7 +142,16 @@ export default function ProductDetails() {
 
                                         {/* Title & Rating */}
                                         <section>
-                                            <span className="text-[#2874f0] text-sm font-semibold">Visit {product.brand} store</span>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-[#2874f0] text-sm font-semibold">Visit {product.brand} store</span>
+                                                <button
+                                                    onClick={() => toggleWishlist(product.id)}
+                                                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                                                    aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+                                                >
+                                                    <Heart size={22} className={isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'} />
+                                                </button>
+                                            </div>
                                             <h1 className="mt-2 text-[24px] lg:text-[30px] leading-[1.3] font-normal text-[#212121]">
                                                 {product.title}
                                             </h1>

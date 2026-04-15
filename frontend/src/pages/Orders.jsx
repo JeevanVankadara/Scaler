@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
+import AccountSidebar from './components/AccountSidebar';
 import OrderFilters from './components/OrderFilters';
 import OrderItem from './components/OrderItem';
 import { ChevronRight, Search } from 'lucide-react';
@@ -9,28 +10,16 @@ import { ChevronRight, Search } from 'lucide-react';
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Orders() {
-    const { orders: localOrders } = useCart();
-    const [orders, setOrders] = useState([]);
+    const { orders } = useCart();
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Try fetching from API first, fall back to localStorage
-        fetch(`${API}/orders`)
-            .then((r) => r.json())
-            .then((data) => {
-                if (data.success && data.orders.length > 0) {
-                    setOrders(data.orders);
-                } else {
-                    setOrders(localOrders);
-                }
-            })
-            .catch(() => {
-                setOrders(localOrders);
-            })
-            .finally(() => setLoading(false));
-    }, [localOrders]);
+        // Small delay to show skeleton then render from localStorage
+        const t = setTimeout(() => setLoading(false), 300);
+        return () => clearTimeout(t);
+    }, []);
 
     const filteredOrders = orders.filter((order) => {
         // Search filter
@@ -67,8 +56,9 @@ export default function Orders() {
                     </div>
 
                     <div className="flex flex-col lg:flex-row gap-3">
-                        {/* Left Filter */}
-                        <aside className="w-full lg:w-[250px] shrink-0">
+                        {/* Left Sidebar */}
+                        <aside className="w-full lg:w-[250px] shrink-0 space-y-3">
+                            <AccountSidebar />
                             <OrderFilters
                                 statusFilter={statusFilter}
                                 onStatusChange={setStatusFilter}
