@@ -1,45 +1,56 @@
+import { useEffect, useState } from 'react';
+import { useCart } from '../context/CartContext';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import OrderFilters from './components/OrderFilters';
 import OrderItem from './components/OrderItem';
 import { ChevronRight, Search } from 'lucide-react';
 
-const orders = [
-    {
-        id: 1,
-        title: 'URBN 20000 mAh 22.5 W Nano Pocket Size Power Bank',
-        price: '₹1,602',
-        color: 'Green',
-        delivered: 'Jan 07, 2025',
-        image: '/product-photos/Pendrives.webp',
-    },
-    {
-        id: 2,
-        title: 'Kreo Griphin Wired Optical Gaming Mouse',
-        price: '₹1,509',
-        color: 'Black',
-        delivered: 'Jun 06, 2024',
-        image: '/product-photos/Neckbans.webp',
-    },
-    {
-        id: 3,
-        title: 'boAt Airdopes 141 Bluetooth Truly Wireless Earbuds',
-        price: '₹1,299',
-        color: 'Black',
-        delivered: 'Mar 15, 2024',
-        image: '/product-photos/earphones.webp',
-    },
-    {
-        id: 4,
-        title: 'Fire-Boltt Ninja Call Pro Plus Smartwatch',
-        price: '₹1,899',
-        color: 'Black',
-        delivered: 'Feb 20, 2024',
-        image: '/product-photos/watches.webp',
-    },
-];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Orders() {
+    const { orders: localOrders } = useCart();
+    const [orders, setOrders] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Try fetching from API first, fall back to localStorage
+        fetch(`${API}/orders`)
+            .then((r) => r.json())
+            .then((data) => {
+                if (data.success && data.orders.length > 0) {
+                    setOrders(data.orders);
+                } else {
+                    setOrders(localOrders);
+                }
+            })
+            .catch(() => {
+                setOrders(localOrders);
+            })
+            .finally(() => setLoading(false));
+    }, [localOrders]);
+
+    const filteredOrders = orders.filter((order) => {
+        // Search filter
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            const matchesItems = order.items?.some((item) =>
+                (item.title || '').toLowerCase().includes(q)
+            );
+            const matchesId = order.orderId?.toLowerCase().includes(q);
+            if (!matchesItems && !matchesId) return false;
+        }
+
+        // Status filter
+        if (statusFilter.length > 0) {
+            if (!statusFilter.includes(order.status)) return false;
+        }
+
+        return true;
+    });
+
     return (
         <div className="min-h-screen bg-[#f1f3f6] flex flex-col">
             <NavBar />
@@ -58,7 +69,10 @@ export default function Orders() {
                     <div className="flex gap-3">
                         {/* Left Filter */}
                         <aside className="w-[250px] shrink-0">
-                            <OrderFilters />
+                            <OrderFilters
+                                statusFilter={statusFilter}
+                                onStatusChange={setStatusFilter}
+                            />
                         </aside>
 
                         {/* Right Content */}
@@ -66,6 +80,8 @@ export default function Orders() {
                             {/* Search bar */}
                             <div className="bg-white shadow-sm flex mb-3 overflow-hidden rounded-md">
                                 <input
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search your orders here"
                                     className="flex-1 px-4 py-3 text-sm outline-none placeholder-[#878787]"
                                 />
@@ -76,11 +92,22 @@ export default function Orders() {
                             </div>
 
                             {/* Order list */}
-                            <div className="space-y-3">
-                                {orders.map((order) => (
-                                    <OrderItem key={order.id} order={order} />
-                                ))}
-                            </div>
+                            {loading ? (
+                                <div className="flex items-center justify-center py-20">
+                                    <div className="w-8 h-8 border-4 border-[#2874f0] border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            ) : filteredOrders.length === 0 ? (
+                                <div className="bg-white shadow-sm rounded-md text-center py-16">
+                                    <p className="text-lg text-[#212121]">No orders found</p>
+                                    <p className="text-sm text-[#878787] mt-1">Looks like you haven't placed any orders yet</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {filteredOrders.map((order) => (
+                                        <OrderItem key={order.orderId} order={order} />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

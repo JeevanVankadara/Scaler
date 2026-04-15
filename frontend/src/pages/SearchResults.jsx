@@ -1,124 +1,130 @@
+import { useState, useEffect, useMemo } from 'react';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import ProductFilters from './components/ProductFilters';
 import ProductCard from './components/ProductCard';
 import { ChevronRight } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 
-const staticProducts = [
-  {
-    title: 'Samsung Galaxy S25 FE 5G (Navy, 128 GB) (8 GB RAM)',
-    image: '/product-photos/earphones.webp',
-    rating: 4.6,
-    reviews: '156 Ratings',
-    highlights: [
-      '8 GB RAM | 128 GB ROM',
-      '6.7 inch Dynamic AMOLED 2X Display',
-      '50MP + 12MP + 8MP Rear Camera',
-      '12MP Front Camera',
-      '4900 mAh Battery',
-      'Fast performance for daily use',
-    ],
-    price: 44999,
-    originalPrice: 59999,
-    discountLabel: '25% off',
-    exchangeValue: 32700,
-  },
-  {
-    title: 'Noise Smart Watch (Classic Black Strap)',
-    image: '/product-photos/watches.webp',
-    rating: 4.1,
-    reviews: '2,301 Ratings',
-    highlights: [
-      '1.8 inch Display',
-      'Bluetooth Calling',
-      'Heart Rate Monitoring',
-      '100+ Sports Modes',
-      'Up to 7 Days Battery',
-      'IP68 Water Resistance',
-    ],
-    price: 2999,
-    originalPrice: 5999,
-    discountLabel: '50% off',
-    exchangeValue: 900,
-  },
-  {
-    title: 'Wireless Neckband Earphones (Deep Black)',
-    image: '/product-photos/Neckbans.webp',
-    rating: 4.3,
-    reviews: '8,403 Ratings',
-    highlights: [
-      'Strong bass sound',
-      'Long battery backup',
-      'Comfort-fit neckband design',
-      'Fast charging support',
-      'Clear calling microphone',
-      'Lightweight daily use design',
-    ],
-    price: 1499,
-    originalPrice: 2499,
-    discountLabel: '40% off',
-    exchangeValue: 250,
-  },
-  {
-    title: 'HP USB 3.2 Pen Drive (256 GB, Black)',
-    image: '/product-photos/Pendrives.webp',
-    rating: 4.2,
-    reviews: '3,812 Ratings',
-    highlights: [
-      '256 GB Storage',
-      'USB 3.2 High Speed Transfer',
-      'Compact metal body',
-      'Works with laptops and desktops',
-      'Easy plug and play',
-      'Portable everyday storage',
-    ],
-    price: 899,
-    originalPrice: 1499,
-    discountLabel: '40% off',
-    exchangeValue: 200,
-  },
-];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || 'mobiles';
+  const query = searchParams.get('q') || '';
+  const categoryParam = searchParams.get('category') || '';
+
+  // All products for current query/category (before brand/price/sort filters)
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Client-side filters
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [maxPrice, setMaxPrice] = useState(100000);
+
+  // Reset filters when query or category changes
+  useEffect(() => {
+    setSortOrder('');
+    setSelectedBrands([]);
+    setMaxPrice(100000);
+  }, [query, categoryParam]);
+
+  // Fetch products — only by query + category (no brand/price/sort sent to API)
+  useEffect(() => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (categoryParam) params.set('category', categoryParam);
+
+    fetch(`${API}/products?${params.toString()}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) setAllProducts(data.products);
+      })
+      .catch(() => { })
+      .finally(() => setLoading(false));
+  }, [query, categoryParam]);
+
+  // Derive all unique brands from the FULL result set (not the filtered one)
+  const brands = useMemo(() => {
+    const set = new Set(allProducts.map((p) => p.brand));
+    return [...set].sort();
+  }, [allProducts]);
+
+  // Apply client-side brand, price, and sort filters
+  const filteredProducts = useMemo(() => {
+    let results = [...allProducts];
+
+    // Brand filter
+    if (selectedBrands.length > 0) {
+      const lowerBrands = selectedBrands.map((b) => b.toLowerCase());
+      results = results.filter((p) => lowerBrands.includes(p.brand.toLowerCase()));
+    }
+
+    // Price filter
+    if (maxPrice < 100000) {
+      results = results.filter((p) => p.price <= maxPrice);
+    }
+
+    // Sort
+    if (sortOrder === 'low-high') results.sort((a, b) => a.price - b.price);
+    else if (sortOrder === 'high-low') results.sort((a, b) => b.price - a.price);
+
+    return results;
+  }, [allProducts, selectedBrands, maxPrice, sortOrder]);
 
   return (
     <div className="min-h-screen bg-[#f1f3f6] flex flex-col">
       <NavBar />
-
       <main className="flex-1">
         <div className="max-w-[1300px] mx-auto flex gap-2 p-2">
           <aside className="w-[250px] shrink-0 hidden lg:block">
-            <ProductFilters />
+            <ProductFilters
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              brands={brands}
+              selectedBrands={selectedBrands}
+              onBrandChange={setSelectedBrands}
+              maxPrice={maxPrice}
+              onPriceChange={setMaxPrice}
+            />
           </aside>
 
           <div className="flex-1 bg-white shadow-sm">
             <div className="px-4 pt-3 pb-2 flex items-center gap-1.5 text-xs text-[#878787]">
-              <span className="hover:text-[#2874f0] cursor-pointer">Home</span>
+              <Link to="/" className="hover:text-[#2874f0] cursor-pointer">Home</Link>
               <ChevronRight size={14} />
-              <span className="hover:text-[#2874f0] cursor-pointer">Mobiles & Accessories</span>
-              <ChevronRight size={14} />
-              <span className="text-[#212121]">Mobiles</span>
+              <span className="text-[#212121]">Search Results</span>
             </div>
 
             <div className="px-4 pb-3">
               <h1 className="text-sm text-[#212121]">
-                Showing 1 - {staticProducts.length} of {staticProducts.length} results for{' '}
-                <span className="font-medium">"{query}"</span>
+                {loading
+                  ? 'Searching...'
+                  : `Showing 1 - ${filteredProducts.length} of ${filteredProducts.length} results for `}
+                <span className="font-medium">"{query || categoryParam}"</span>
               </h1>
             </div>
 
             <div>
-              {staticProducts.map((product) => (
-                <ProductCard key={product.title} product={product} />
-              ))}
+              {loading ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="w-8 h-8 border-4 border-[#2874f0] border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : filteredProducts.length === 0 ? (
+                <div className="text-center py-20 text-[#878787]">
+                  <p className="text-lg">No products found</p>
+                  <p className="text-sm mt-1">Try a different search term or adjust filters</p>
+                </div>
+              ) : (
+                filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))
+              )}
             </div>
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );

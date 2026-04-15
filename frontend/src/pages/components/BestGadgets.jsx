@@ -5,6 +5,7 @@ export default function BestGadgets({
   title = 'Best Gadgets & Appliances',
   bgColor = '#ede7f6',
   items = null,
+  categoryId = '',
 }) {
   const navigate = useNavigate();
 
@@ -17,12 +18,31 @@ export default function BestGadgets({
 
   const data = items || defaultItems;
 
+  const handleClick = (item) => {
+    if (item.id) {
+      navigate(`/product/${item.id}`);
+    } else {
+      navigate('/search');
+    }
+  };
+
+  const handleViewAll = () => {
+    if (categoryId) {
+      navigate(`/search?category=${categoryId}`);
+    } else {
+      navigate('/search');
+    }
+  };
+
   return (
     <div className="mt-3">
       <div className="rounded-xl p-3 sm:p-4" style={{ backgroundColor: bgColor }}>
         <div className="flex items-center justify-between mb-3 px-1">
           <h2 className="text-[18px] font-semibold text-[#212121]">{title}</h2>
-          <button className="bg-[#111] hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition">
+          <button
+            onClick={handleViewAll}
+            className="bg-[#111] hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition"
+          >
             <ArrowRight size={18} strokeWidth={2.5} />
           </button>
         </div>
@@ -33,7 +53,7 @@ export default function BestGadgets({
               <button
                 key={i}
                 type="button"
-                onClick={() => navigate('/product-details')}
+                onClick={() => handleClick(item)}
                 className="text-left cursor-pointer group"
               >
                 <div className="bg-[#f5f5f5] rounded-lg aspect-[4/3] flex items-center justify-center p-3 overflow-hidden">
@@ -44,7 +64,7 @@ export default function BestGadgets({
                   />
                 </div>
                 <div className="mt-2 px-0.5">
-                  <p className="text-[13px] text-[#212121] leading-tight">{item.title}</p>
+                  <p className="text-[13px] text-[#212121] leading-tight truncate">{item.title}</p>
                   <p className="text-[13px] font-bold text-[#212121] leading-tight">{item.subtitle}</p>
                 </div>
               </button>

@@ -1,28 +1,42 @@
-export default function OrderFilters() {
+export default function OrderFilters({ statusFilter = [], onStatusChange = () => { } }) {
+    const statuses = ['confirmed', 'delivered', 'cancelled', 'returned'];
+    const timeFilters = ['Last 30 days', '2024', '2023', 'Older'];
+
+    const toggleStatus = (s) => {
+        if (statusFilter.includes(s)) {
+            onStatusChange(statusFilter.filter((x) => x !== s));
+        } else {
+            onStatusChange([...statusFilter, s]);
+        }
+    };
+
     return (
         <div className="bg-white shadow-sm rounded-md">
             <div className="px-4 py-3">
                 <h2 className="text-lg font-medium text-[#212121]">Filters</h2>
             </div>
 
-            {/* Order Status */}
             <div className="px-4 py-4">
                 <h3 className="text-xs font-medium text-[#212121] uppercase mb-3">Order Status</h3>
                 <div className="space-y-3">
-                    {['On the way', 'Delivered', 'Cancelled', 'Returned'].map((s) => (
+                    {statuses.map((s) => (
                         <label key={s} className="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" className="w-4 h-4 border-2 border-[#c2c2c2] rounded accent-[#2874f0]" />
-                            <span className="text-sm text-[#212121]">{s}</span>
+                            <input
+                                type="checkbox"
+                                checked={statusFilter.includes(s)}
+                                onChange={() => toggleStatus(s)}
+                                className="w-4 h-4 border-2 border-[#c2c2c2] rounded accent-[#2874f0]"
+                            />
+                            <span className="text-sm text-[#212121] capitalize">{s}</span>
                         </label>
                     ))}
                 </div>
             </div>
 
-            {/* Order Time */}
             <div className="px-4 py-4">
                 <h3 className="text-xs font-medium text-[#212121] uppercase mb-3">Order Time</h3>
                 <div className="space-y-3">
-                    {['Last 30 days', '2024', '2023', 'Older'].map((t) => (
+                    {timeFilters.map((t) => (
                         <label key={t} className="flex items-center gap-3 cursor-pointer">
                             <input type="checkbox" className="w-4 h-4 border-2 border-[#c2c2c2] rounded accent-[#2874f0]" />
                             <span className="text-sm text-[#212121]">{t}</span>

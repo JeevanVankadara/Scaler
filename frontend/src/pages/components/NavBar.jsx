@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
+import { useCart } from '../../context/CartContext';
 
-export default function NavBar({ cartCount = 0 }) {
+export default function NavBar() {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
+    const { cartCount } = useCart();
 
     const handleSearch = () => {
         const q = searchQuery.trim();
@@ -14,29 +16,21 @@ export default function NavBar({ cartCount = 0 }) {
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
+        if (e.key === 'Enter') handleSearch();
     };
 
     return (
         <header className="bg-white sticky top-0 z-50 px-10">
             <div className="max-w-7xl mx-auto px-4">
-                {/* ---------- Top Row ---------- */}
+                {/* Top Row */}
                 <div className="flex items-center justify-between h-12 mb-3 mt-2">
-                    {/* Left: Yellow Flipkart pill */}
                     <div className="flex items-center gap-2">
-                        <a href="/" className="flex items-center gap-2 bg-[#ffe500] hover:bg-[#f7db00] transition rounded-xl px-4 py-1.5">
-                            <img
-                                src="/flipkart-logo.webp"
-                                alt="f"
-                                className="w-6 h-6 object-contain"
-                            />
+                        <Link to="/" className="flex items-center gap-2 bg-[#ffe500] hover:bg-[#f7db00] transition rounded-xl px-4 py-1.5">
+                            <img src="/flipkart-logo.webp" alt="f" className="w-6 h-6 object-contain" />
                             <span className="text-sm font-semibold italic text-black tracking-tight">Flipkart</span>
-                        </a>
+                        </Link>
                     </div>
 
-                    {/* Right: Location */}
                     <div className="hidden md:flex items-center gap-1.5 text-sm">
                         <img src="/location.png" alt="location" className="w-4 h-4" />
                         <span className="text-[#212121] font-bold">Location not set</span>
@@ -47,9 +41,8 @@ export default function NavBar({ cartCount = 0 }) {
                     </div>
                 </div>
 
-                {/* ---------- Search Row ---------- */}
+                {/* Search Row */}
                 <div className="flex items-center gap-6 pb-3">
-                    {/* Search - takes most space */}
                     <div className="flex-1">
                         <div className="relative">
                             <button
@@ -69,7 +62,6 @@ export default function NavBar({ cartCount = 0 }) {
                         </div>
                     </div>
 
-                    {/* Right actions */}
                     <div className="flex items-center gap-7 shrink-0">
                         {/* User Account */}
                         <div className="relative group">
@@ -78,25 +70,24 @@ export default function NavBar({ cartCount = 0 }) {
                                 <span className="text-sm text-[#212121]">Dheeraj</span>
                                 <ChevronDown size={16} className="text-[#717478] group-hover:rotate-180 transition-transform duration-200" />
                             </button>
-                            {/* dropdown */}
                             <div className="absolute top-full right-0 mt-1 w-56 bg-white rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-[#e0e0e0] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div className="px-4 py-3 border-b border-[#f0f0f0]">
                                     <p className="text-sm font-medium text-[#212121]">Your Account</p>
                                 </div>
                                 <div className="py-1">
-                                    <a href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
+                                    <Link to="/" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
                                         <img src="/login-icon.svg" alt="profile" className="w-5 h-5 opacity-70" />
                                         My Profile
-                                    </a>
-                                    <a href="/orders" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
+                                    </Link>
+                                    <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
                                         <img src="/orders-icon.svg" alt="orders" className="w-5 h-5 opacity-70" />
                                         My Orders
-                                    </a>
+                                    </Link>
                                     <div className="border-t border-[#f0f0f0] my-1"></div>
-                                    <a href="/logout" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
+                                    <Link to="/" className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#212121] hover:bg-[#f5f5f5] transition-colors">
                                         <img src="/Logout-icon.svg" alt="logout" className="w-5 h-5 opacity-70" />
                                         Logout
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -110,7 +101,7 @@ export default function NavBar({ cartCount = 0 }) {
                         </div>
 
                         {/* Cart */}
-                        <a href="/cart" className="flex items-center gap-2">
+                        <Link to="/cart" className="flex items-center gap-2">
                             <div className="relative">
                                 <img src="/cart-icon.svg" alt="cart" className="w-6 h-6" />
                                 {cartCount > 0 && (
@@ -120,12 +111,10 @@ export default function NavBar({ cartCount = 0 }) {
                                 )}
                             </div>
                             <span className="text-sm text-[#212121] hidden sm:block">Cart</span>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>
-
-            {/* border is handled by CategoryNav's border-t */}
         </header>
     );
 }

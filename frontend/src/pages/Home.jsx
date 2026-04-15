@@ -9,9 +9,8 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-[#ffffff]">
-            <NavBar cartCount={0} />
+            <NavBar />
             <CategoryNav selected={selected} onSelect={setSelected} />
-
             <main className="max-w-7xl mx-auto px-10 mt-3">
                 <CategoryContent category={selected} />
             </main>
