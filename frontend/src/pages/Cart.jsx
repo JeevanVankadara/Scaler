@@ -181,15 +181,11 @@ export default function Cart() {
                                                 <div className="flex-1">
                                                     <div className="flex justify-between gap-3">
                                                         <div>
-                                                            <h3
-                                                                onClick={() => navigate(`/product/${p.id}`)}
-                                                                className="text-sm text-[#212121] hover:text-[#2874f0] cursor-pointer leading-snug"
-                                                            >
-                                                                {p.title}
-                                                            </h3>
-                                                            <p className="text-xs text-[#878787] mt-0.5">{p.highlights?.[0]}</p>
+                                                            <h3 className="text-sm md:text-base text-[#212121] line-clamp-1 cursor-pointer" onClick={() => navigate(`/product/${p.id}`)}>{p.title}</h3>
+                                                            {p.highlights?.[0] && (
+                                                                <p className="text-xs text-[#878787] mt-0.5 line-clamp-1">{p.highlights[0]}</p>
+                                                            )}
                                                             <div className="flex items-center gap-2 mt-1.5">
-                                                                <span className="text-xs text-[#878787]">Seller: {p.seller}</span>
                                                                 {p.fAssured && (
                                                                     <img
                                                                         src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png"

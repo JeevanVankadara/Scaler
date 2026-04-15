@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, MapPin, Star, Truck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -22,7 +22,7 @@ export default function ProductDetails() {
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [selectedVariant, setSelectedVariant] = useState('');
+
     const [stockPopup, setStockPopup] = useState({ open: false, name: '', stock: 0 });
 
     useEffect(() => {
@@ -33,22 +33,14 @@ export default function ProductDetails() {
             .then((data) => {
                 if (data.success && data.product) {
                     setProduct(data.product);
-                    // Set defaults
 
-                    if (data.product.variants?.length > 0) {
-                        const inStock = data.product.variants.find((v) => v.inStock);
-                        setSelectedVariant(inStock?.label || data.product.variants[0].label);
-                    }
                 }
             })
             .catch(() => {})
             .finally(() => setLoading(false));
     }, [id]);
 
-    const activeVariant = useMemo(() => {
-        if (!product?.variants) return null;
-        return product.variants.find((v) => v.label === selectedVariant) || product.variants[0];
-    }, [product, selectedVariant]);
+
 
     const handleAddToCart = () => {
         if (product.stock <= 0) {
@@ -105,9 +97,9 @@ export default function ProductDetails() {
         );
     }
 
-    const displayPrice = activeVariant?.price || product.price;
-    const displayOriginal = activeVariant?.originalPrice || product.originalPrice;
-    const displayDiscount = activeVariant?.discountLabel || product.discountLabel;
+    const displayPrice = product.price;
+    const displayOriginal = product.originalPrice;
+    const displayDiscount = product.discountLabel;
 
     return (
         <div className="min-h-screen bg-[#f1f3f6] flex flex-col">
@@ -139,44 +131,7 @@ export default function ProductDetails() {
                                 <div className="flex flex-col h-full lg:max-h-[calc(100vh-140px)]">
                                     <div className="flex-1 lg:overflow-y-auto pr-1 lg:pr-3 space-y-5">
 
-                                        {/* Variant Selection */}
-                                        {product.variants?.length > 0 && (
-                                            <section>
-                                                <h2 className="text-[17px] font-semibold text-[#212121] mb-3">
-                                                    Variant: <span className="font-normal">{selectedVariant}</span>
-                                                </h2>
-                                                <div className="flex flex-wrap gap-3">
-                                                    {product.variants.map((variant) => {
-                                                        const isActive = selectedVariant === variant.label;
-                                                        return (
-                                                            <button
-                                                                key={variant.label}
-                                                                type="button"
-                                                                onClick={() => variant.inStock && setSelectedVariant(variant.label)}
-                                                                className={`min-w-[192px] rounded-2xl border px-4 py-3 text-left transition-all ${
-                                                                    isActive
-                                                                        ? 'border-[#212121] bg-[#f8fbff]'
-                                                                        : 'border-[#d9d9d9]'
-                                                                } ${variant.inStock ? 'hover:border-[#666666]' : 'opacity-80 cursor-not-allowed'}`}
-                                                            >
-                                                                <div className="text-[15px] font-semibold text-[#212121]">{variant.label}</div>
-                                                                {variant.inStock ? (
-                                                                    <>
-                                                                        <div className="mt-2 text-sm">
-                                                                            <span className="text-[#008c48] font-semibold">{variant.discountLabel}</span>{' '}
-                                                                            <span className="text-[#878787] line-through">{formatPrice(variant.originalPrice)}</span>
-                                                                        </div>
-                                                                        <div className="text-[17px] font-semibold text-[#212121]">{formatPrice(variant.price)}</div>
-                                                                    </>
-                                                                ) : (
-                                                                    <div className="text-[#ff6161] text-[15px] mt-4">Out of stock</div>
-                                                                )}
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </section>
-                                        )}
+
 
                                         {/* Title & Rating */}
                                         <section>
@@ -229,12 +184,6 @@ export default function ProductDetails() {
                                                     <div className="flex items-center gap-2 font-semibold text-[#212121]">
                                                         <Truck size={18} />
                                                         <span>Delivery by {getDeliveryDate()}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="px-4 py-4 border-t border-[#f0f0f0] bg-white">
-                                                    <div className="text-[15px] font-medium text-[#212121]">Sold by {product.seller}</div>
-                                                    <div className="text-sm text-[#5f6368] mt-1">
-                                                        {product.sellerRating} stars | {product.sellerYears} years with Flipkart
                                                     </div>
                                                 </div>
                                             </div>
