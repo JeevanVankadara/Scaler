@@ -21,7 +21,7 @@ export default function ProductDetails() {
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [selectedColor, setSelectedColor] = useState('');
+
     const [selectedVariant, setSelectedVariant] = useState('');
 
     useEffect(() => {
@@ -33,9 +33,7 @@ export default function ProductDetails() {
                 if (data.success && data.product) {
                     setProduct(data.product);
                     // Set defaults
-                    if (data.product.colorOptions?.length > 0) {
-                        setSelectedColor(data.product.colorOptions[0].name);
-                    }
+
                     if (data.product.variants?.length > 0) {
                         const inStock = data.product.variants.find((v) => v.inStock);
                         setSelectedVariant(inStock?.label || data.product.variants[0].label);
@@ -130,38 +128,7 @@ export default function ProductDetails() {
                             {/* Right — Product Info */}
                             <div className="min-h-0">
                                 <div className="flex flex-col h-full max-h-[calc(100vh-140px)]">
-                                    <div className="flex-1 overflow-y-auto pr-1 lg:pr-3 space-y-7">
-                                        {/* Color Selection */}
-                                        {product.colorOptions?.length > 0 && (
-                                            <section>
-                                                <h2 className="text-[17px] font-semibold text-[#212121] mb-3">
-                                                    Selected Color: <span className="font-normal">{selectedColor}</span>
-                                                </h2>
-                                                <div className="flex flex-wrap gap-3">
-                                                    {product.colorOptions.map((color) => {
-                                                        const isActive = selectedColor === color.name;
-                                                        return (
-                                                            <button
-                                                                key={color.name}
-                                                                type="button"
-                                                                onClick={() => setSelectedColor(color.name)}
-                                                                className={`w-[72px] h-[72px] border rounded-2xl p-2 bg-white transition-all ${
-                                                                    isActive
-                                                                        ? 'border-[#212121] shadow-[0_0_0_1px_#212121]'
-                                                                        : 'border-[#d9d9d9] hover:border-[#999999]'
-                                                                }`}
-                                                            >
-                                                                <div
-                                                                    className="w-full h-full rounded-lg"
-                                                                    style={{ backgroundColor: color.hex }}
-                                                                    title={color.name}
-                                                                />
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </section>
-                                        )}
+                                    <div className="flex-1 overflow-y-auto pr-1 lg:pr-3 space-y-5">
 
                                         {/* Variant Selection */}
                                         {product.variants?.length > 0 && (
@@ -285,8 +252,8 @@ export default function ProductDetails() {
                                         {/* Description */}
                                         {product.description?.length > 0 && (
                                             <section>
-                                                <h2 className="text-[18px] lg:text-[20px] font-semibold text-[#212121] mb-4">Description</h2>
-                                                <div className="space-y-3 text-[16px] leading-7 text-[#212121]">
+                                                <h2 className="text-[16px] lg:text-[18px] font-semibold text-[#212121] mb-2">Description</h2>
+                                                <div className="space-y-1.5 text-[13px] leading-5 text-[#212121]">
                                                     {product.description.map((p, i) => (
                                                         <p key={i}>{p}</p>
                                                     ))}
@@ -297,6 +264,7 @@ export default function ProductDetails() {
                                         <div className="h-6" />
                                     </div>
 
+                                    <div className="mt-4" />
                                     <StickyBuyBar
                                         price={displayPrice}
                                         onAddToCart={handleAddToCart}

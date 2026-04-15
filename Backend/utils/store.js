@@ -84,6 +84,26 @@ function getProductsByCategory(categoryId) {
     return products.filter((p) => p.categoryId === categoryId);
 }
 
+function getSuggestions(query, limit = 8) {
+    if (!query) return [];
+    const q = query.toLowerCase();
+    return products
+        .filter(
+            (p) =>
+                p.title.toLowerCase().includes(q) ||
+                p.brand.toLowerCase().includes(q) ||
+                p.category.toLowerCase().includes(q) ||
+                p.subcategory.toLowerCase().includes(q)
+        )
+        .slice(0, limit)
+        .map((p) => ({
+            id: p.id,
+            title: p.title,
+            category: p.category,
+            image: p.images?.[0] || '',
+        }));
+}
+
 // ── Categories / Home ──
 
 function getCategories() {
@@ -205,6 +225,7 @@ module.exports = {
     getProductsByIds,
     searchProducts,
     getSimilarProducts,
+    getSuggestions,
     getCategories,
     getBanners,
     getHomeSections,

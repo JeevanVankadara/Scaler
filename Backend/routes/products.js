@@ -13,6 +13,17 @@ router.get('/', (req, res) => {
     }
 });
 
+// GET /api/products/suggestions
+router.get('/suggestions', (req, res) => {
+    try {
+        const { q } = req.query;
+        const suggestions = store.getSuggestions(q);
+        res.json({ success: true, suggestions });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 // GET /api/products/home
 router.get('/home', (_req, res) => {
     try {

@@ -1,23 +1,160 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export default function NavBar() {
     const [searchQuery, setSearchQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(-1);
+    // Store the user's actual typed text so we can restore it on Escape or re-navigation
+    const [userQuery, setUserQuery] = useState('');
+
     const navigate = useNavigate();
     const { cartCount } = useCart();
 
-    const handleSearch = () => {
-        const q = searchQuery.trim();
+    const dropdownRef = useRef(null);
+    const inputRef = useRef(null);
+    const debounceRef = useRef(null);
+
+    // ── Fetch suggestions with debounce ──
+    const fetchSuggestions = useCallback((query) => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+
+        if (!query.trim()) {
+            setSuggestions([]);
+            setShowDropdown(false);
+            return;
+        }
+
+        debounceRef.current = setTimeout(async () => {
+            try {
+                const res = await fetch(`${API}/products/suggestions?q=${encodeURIComponent(query.trim())}`);
+                const data = await res.json();
+                if (data.success && data.suggestions?.length > 0) {
+                    setSuggestions(data.suggestions);
+                    setShowDropdown(true);
+                } else {
+                    setSuggestions([]);
+                    setShowDropdown(false);
+                }
+            } catch {
+                setSuggestions([]);
+                setShowDropdown(false);
+            }
+        }, 200);
+    }, []);
+
+    // ── Handle input changes ──
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+        setUserQuery(value);
+        setActiveIndex(-1);
+        fetchSuggestions(value);
+    };
+
+    // ── Navigate to search page ──
+    const handleSearch = (query) => {
+        const q = (query || searchQuery).trim();
         if (q) {
+            setShowDropdown(false);
+            setSuggestions([]);
             navigate(`/search?q=${encodeURIComponent(q)}`);
+            inputRef.current?.blur();
         }
     };
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') handleSearch();
+    // ── Navigate to product detail ──
+    const handleSelectSuggestion = (suggestion) => {
+        setSearchQuery(suggestion.title);
+        setShowDropdown(false);
+        setSuggestions([]);
+        navigate(`/product/${suggestion.id}`);
+        inputRef.current?.blur();
     };
+
+    // ── Keyboard navigation ──
+    const handleKeyDown = (e) => {
+        if (!showDropdown || suggestions.length === 0) {
+            if (e.key === 'Enter') handleSearch();
+            return;
+        }
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                setActiveIndex((prev) => {
+                    const next = prev < suggestions.length - 1 ? prev + 1 : 0;
+                    setSearchQuery(suggestions[next].title);
+                    return next;
+                });
+                break;
+
+            case 'ArrowUp':
+                e.preventDefault();
+                setActiveIndex((prev) => {
+                    if (prev <= 0) {
+                        // Go back to user's original query
+                        setSearchQuery(userQuery);
+                        return -1;
+                    }
+                    const next = prev - 1;
+                    setSearchQuery(suggestions[next].title);
+                    return next;
+                });
+                break;
+
+            case 'Enter':
+                e.preventDefault();
+                if (activeIndex >= 0 && activeIndex < suggestions.length) {
+                    handleSelectSuggestion(suggestions[activeIndex]);
+                } else {
+                    handleSearch();
+                }
+                break;
+
+            case 'Escape':
+                setShowDropdown(false);
+                setActiveIndex(-1);
+                setSearchQuery(userQuery);
+                inputRef.current?.blur();
+                break;
+
+            default:
+                break;
+        }
+    };
+
+    // ── Scroll active item into view ──
+    useEffect(() => {
+        if (activeIndex >= 0 && dropdownRef.current) {
+            const items = dropdownRef.current.querySelectorAll('[data-suggestion]');
+            if (items[activeIndex]) {
+                items[activeIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
+    }, [activeIndex]);
+
+    // ── Close dropdown on outside click ──
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target) &&
+                inputRef.current &&
+                !inputRef.current.contains(e.target)
+            ) {
+                setShowDropdown(false);
+                setActiveIndex(-1);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
         <header className="bg-white sticky top-0 z-50 px-10">
@@ -46,19 +183,73 @@ export default function NavBar() {
                     <div className="flex-1">
                         <div className="relative">
                             <button
-                                onClick={handleSearch}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#717478] hover:text-[#2a55e5] transition-colors"
+                                onClick={() => handleSearch()}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#717478] hover:text-[#2a55e5] transition-colors z-10"
                             >
                                 <Search size={20} strokeWidth={2.2} />
                             </button>
                             <input
+                                ref={inputRef}
                                 type="text"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
+                                onFocus={() => {
+                                    if (suggestions.length > 0) setShowDropdown(true);
+                                }}
                                 placeholder="Search for Products, Brands and More"
                                 className="w-full h-11 pl-10 pr-4 text-sm bg-white border border-[#2a55e5] rounded-lg outline-none placeholder-[#717478] focus:shadow-[0_0_0_1px_#2a55e5]"
+                                autoComplete="off"
                             />
+
+                            {/* Suggestions Dropdown */}
+                            {showDropdown && suggestions.length > 0 && (
+                                <div
+                                    ref={dropdownRef}
+                                    className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg border border-[#e0e0e0] shadow-[0_8px_24px_rgba(0,0,0,0.12)] z-50 max-h-[420px] overflow-y-auto"
+                                >
+                                    {suggestions.map((s, idx) => {
+                                        const isActive = idx === activeIndex;
+                                        return (
+                                            <div
+                                                key={s.id}
+                                                data-suggestion
+                                                onClick={() => handleSelectSuggestion(s)}
+                                                onMouseEnter={() => {
+                                                    setActiveIndex(idx);
+                                                    setSearchQuery(s.title);
+                                                }}
+                                                onMouseLeave={() => {
+                                                    setActiveIndex(-1);
+                                                    setSearchQuery(userQuery);
+                                                }}
+                                                className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
+                                                    isActive
+                                                        ? 'bg-[#f0f5ff]'
+                                                        : 'hover:bg-[#f0f5ff]'
+                                                }`}
+                                            >
+                                                {/* Product thumbnail */}
+                                                <div className="w-10 h-10 rounded-md overflow-hidden border border-[#f0f0f0] shrink-0 bg-white flex items-center justify-center">
+                                                    <img
+                                                        src={s.image}
+                                                        alt=""
+                                                        className="w-full h-full object-contain"
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                        }}
+                                                    />
+                                                </div>
+                                                {/* Text */}
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="text-sm text-[#212121] truncate">{s.title}</div>
+                                                    <div className="text-xs text-[#2a55e5]">in {s.category}</div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
 
