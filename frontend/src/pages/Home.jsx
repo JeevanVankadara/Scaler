@@ -11,7 +11,7 @@ export default function Home() {
         <div className="min-h-screen bg-[#ffffff]">
             <NavBar />
             <CategoryNav selected={selected} onSelect={setSelected} />
-            <main className="max-w-7xl mx-auto px-10 mt-3">
+            <main className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-10 mt-3">
                 <CategoryContent category={selected} />
             </main>
             <Footer className="mt-6" />

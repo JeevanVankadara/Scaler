@@ -3,7 +3,7 @@ export default function Footer() {
         <footer className="bg-[#212121] text-white mt-2">
             {/* Top section */}
             <div className="max-w-[1300px] mx-auto px-6 lg:px-10 py-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-5">
                     {/* ABOUT */}
                     <div>
                         <h4 className="text-[#878787] text-[11px] font-medium mb-2">ABOUT</h4>

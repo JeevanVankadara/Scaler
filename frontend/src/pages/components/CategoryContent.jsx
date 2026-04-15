@@ -4,6 +4,12 @@ import BestGadgets from './BestGadgets';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+// ── Client-side cache: survives across navigations ──
+const clientCache = {
+    home: null,       // { banners, homeSections }
+    categories: {},   // { [categoryId]: products[] }
+};
+
 const categoryMeta = {
     fashion: { name: 'Fashion', bg: '#fff3e0' },
     mobiles: { name: 'Mobiles', bg: '#e3f2fd' },
@@ -39,33 +45,52 @@ export default function CategoryContent({ category }) {
     const scrollStart = useRef(0);
     const dragDistance = useRef(0);
 
-    // Fetch home data
+    // Fetch home data (with client cache)
     useEffect(() => {
         if (category !== 'for-you') return;
+
+        // Return cached data instantly if available
+        if (clientCache.home) {
+            setBanners(clientCache.home.banners);
+            setHomeSections(clientCache.home.homeSections);
+            return;
+        }
+
         setHomeLoading(true);
         fetch(`${API}/products/home`)
             .then((r) => r.json())
             .then((data) => {
                 if (data.success) {
-                    setBanners(data.banners || []);
-                    setHomeSections(data.homeSections || []);
+                    const b = data.banners || [];
+                    const s = data.homeSections || [];
+                    clientCache.home = { banners: b, homeSections: s };
+                    setBanners(b);
+                    setHomeSections(s);
                 }
             })
             .catch(() => {
-                // Fallback banners
                 setBanners(['/posters/AC.webp', '/posters/speakers.webp', '/posters/Samsung-phone.webp', '/posters/watches.webp']);
             })
             .finally(() => setHomeLoading(false));
     }, [category]);
 
-    // Fetch category products
+    // Fetch category products (with client cache)
     useEffect(() => {
         if (category === 'for-you') return;
+
+        if (clientCache.categories[category]) {
+            setCategoryProducts(clientCache.categories[category]);
+            return;
+        }
+
         setCatLoading(true);
         fetch(`${API}/products/category/${category}`)
             .then((r) => r.json())
             .then((data) => {
-                if (data.success) setCategoryProducts(data.products || []);
+                if (data.success) {
+                    clientCache.categories[category] = data.products || [];
+                    setCategoryProducts(data.products || []);
+                }
             })
             .catch(() => setCategoryProducts([]))
             .finally(() => setCatLoading(false));
@@ -224,14 +249,12 @@ export default function CategoryContent({ category }) {
                         {posters.map((src, i) => (
                             <div
                                 key={i}
-                                className="snap-start shrink-0 cursor-pointer"
-                                style={{ width: 'calc((100% - 2rem) / 2.35)' }}
+                                className="snap-start shrink-0 cursor-pointer w-[85%] sm:w-[calc((100%-2rem)/2.35)]"
                             >
                                 <img
                                     src={src}
                                     alt={`banner-${i}`}
-                                    loading="lazy"
-                                    className="w-full h-56 object-cover rounded-xl select-none pointer-events-none"
+                                    className="w-full h-32 sm:h-48 lg:h-56 object-cover rounded-xl select-none pointer-events-none"
                                     draggable={false}
                                 />
                             </div>

@@ -66,9 +66,9 @@ export default function Orders() {
                         <span className="text-[#212121]">My Orders</span>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex flex-col lg:flex-row gap-3">
                         {/* Left Filter */}
-                        <aside className="w-[250px] shrink-0">
+                        <aside className="w-full lg:w-[250px] shrink-0">
                             <OrderFilters
                                 statusFilter={statusFilter}
                                 onStatusChange={setStatusFilter}

@@ -20,7 +20,7 @@ export default function ProductGallery({ images, productName }) {
   };
 
   return (
-    <div className="sticky top-20">
+    <div className="relative lg:sticky top-20">
       <div className="bg-white border border-[#e8e8e8] rounded-sm p-5 lg:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
         <div className="min-h-[360px] md:min-h-[470px] flex items-center justify-center bg-[#ffffff]">
           <img

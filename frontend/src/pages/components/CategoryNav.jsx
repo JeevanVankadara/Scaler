@@ -15,12 +15,12 @@ const categories = [
 
 export default function CategoryNav({ selected, onSelect }) {
     return (
-        <div className="bg-white px-10">
+        <div className="bg-white px-0 sm:px-6 lg:px-10">
             <div className="max-w-7xl mx-auto px-2">
                 {/* Inset top border */}
                 <div className="border-t border-gray-200"></div>
 
-                <div className="flex items-center justify-between overflow-x-auto">
+                <div className="flex items-center justify-between overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     {categories.map((cat) => {
                         const active = selected === cat.id;
                         return (

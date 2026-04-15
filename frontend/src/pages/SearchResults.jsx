@@ -77,8 +77,8 @@ export default function SearchResults() {
     <div className="min-h-screen bg-[#f1f3f6] flex flex-col">
       <NavBar />
       <main className="flex-1">
-        <div className="max-w-[1300px] mx-auto flex gap-2 p-2">
-          <aside className="w-[250px] shrink-0 hidden lg:block">
+        <div className="max-w-[1300px] mx-auto flex flex-col lg:flex-row gap-2 p-0 sm:p-2 border-t sm:border-0 border-gray-200">
+          <aside className="w-full lg:w-[250px] shrink-0">
             <ProductFilters
               sortOrder={sortOrder}
               onSortChange={setSortOrder}

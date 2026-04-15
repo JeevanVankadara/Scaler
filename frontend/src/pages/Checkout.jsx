@@ -143,10 +143,10 @@ export default function Checkout() {
             <NavBar />
 
             <main className="flex-1">
-                <div className="max-w-[1100px] mx-auto py-4 px-4">
-                    <div className="flex gap-4">
+                <div className="max-w-[1100px] mx-auto py-4 px-2 md:px-4">
+                    <div className="flex flex-col lg:flex-row gap-4">
                         {/* LEFT COLUMN */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 w-full lg:w-auto min-w-0">
                             <div className="bg-white shadow-sm rounded-sm overflow-hidden">
                                 {/* Stepper */}
                                 <CheckoutStepper currentStep={step} />

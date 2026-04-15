@@ -136,8 +136,8 @@ export default function ProductDetails() {
 
                             {/* Right — Product Info */}
                             <div className="min-h-0">
-                                <div className="flex flex-col h-full max-h-[calc(100vh-140px)]">
-                                    <div className="flex-1 overflow-y-auto pr-1 lg:pr-3 space-y-5">
+                                <div className="flex flex-col h-full lg:max-h-[calc(100vh-140px)]">
+                                    <div className="flex-1 lg:overflow-y-auto pr-1 lg:pr-3 space-y-5">
 
                                         {/* Variant Selection */}
                                         {product.variants?.length > 0 && (
