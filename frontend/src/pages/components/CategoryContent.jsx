@@ -230,6 +230,7 @@ export default function CategoryContent({ category }) {
                                 <img
                                     src={src}
                                     alt={`banner-${i}`}
+                                    loading="lazy"
                                     className="w-full h-56 object-cover rounded-xl select-none pointer-events-none"
                                     draggable={false}
                                 />

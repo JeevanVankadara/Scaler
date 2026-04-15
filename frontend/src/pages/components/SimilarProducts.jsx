@@ -40,6 +40,7 @@ export default function SimilarProducts({ productId }) {
               <img
                 src={product.images?.[0] || '/product-photos/earphones.webp'}
                 alt={product.title}
+                loading="lazy"
                 className="max-h-full max-w-full object-contain"
               />
             </div>

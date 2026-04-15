@@ -1,4 +1,4 @@
-import { Heart, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const assuredBadge = 'https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png';
@@ -23,20 +23,9 @@ export default function ProductCard({ product }) {
         <img
           src={product.images?.[0] || product.image || '/product-photos/earphones.webp'}
           alt={product.title}
+          loading="lazy"
           className="w-full h-[200px] object-contain"
         />
-        <button
-          type="button"
-          onClick={(e) => e.stopPropagation()}
-          className="absolute top-0 right-0 text-gray-300 hover:text-red-400 transition-colors"
-          aria-label="Add to wishlist"
-        >
-          <Heart size={20} fill="transparent" />
-        </button>
-        <div className="mt-3 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-          <input type="checkbox" className="w-3.5 h-3.5 accent-[#2874f0]" />
-          <span className="text-xs text-[#212121]">Add to Compare</span>
-        </div>
       </div>
 
       <div className="flex-1 min-w-0">
