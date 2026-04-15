@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import ProductGallery from './components/ProductGallery';
 import StickyBuyBar from './components/StickyBuyBar';
 import SimilarProducts from './components/SimilarProducts';
+import OutOfStockPopup from './components/OutOfStockPopup';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -21,8 +22,8 @@ export default function ProductDetails() {
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-
     const [selectedVariant, setSelectedVariant] = useState('');
+    const [stockPopup, setStockPopup] = useState({ open: false, name: '', stock: 0 });
 
     useEffect(() => {
         if (!id) return;
@@ -50,11 +51,19 @@ export default function ProductDetails() {
     }, [product, selectedVariant]);
 
     const handleAddToCart = () => {
+        if (product.stock <= 0) {
+            setStockPopup({ open: true, name: product.title, stock: 0 });
+            return;
+        }
         addToCart(product.id);
         navigate('/cart');
     };
 
     const handleBuyNow = () => {
+        if (product.stock <= 0) {
+            setStockPopup({ open: true, name: product.title, stock: 0 });
+            return;
+        }
         addToCart(product.id);
         navigate('/checkout');
     };
@@ -280,6 +289,13 @@ export default function ProductDetails() {
             </main>
 
             <Footer />
+
+            <OutOfStockPopup
+                isOpen={stockPopup.open}
+                onClose={() => setStockPopup({ open: false, name: '', stock: 0 })}
+                productName={stockPopup.name}
+                availableStock={stockPopup.stock}
+            />
         </div>
     );
 }

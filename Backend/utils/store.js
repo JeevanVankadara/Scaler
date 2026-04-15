@@ -176,6 +176,36 @@ function getOrderById(orderId) {
 }
 
 function createOrder(shippingAddress, cartItems) {
+    // ── Stock validation ──
+    const outOfStockItems = [];
+    for (const item of cartItems) {
+        const product = getProductById(item.productId);
+        if (!product) {
+            outOfStockItems.push({
+                productId: item.productId,
+                title: 'Unknown Product',
+                requested: item.quantity,
+                available: 0,
+            });
+            continue;
+        }
+        if (item.quantity > product.stock) {
+            outOfStockItems.push({
+                productId: item.productId,
+                title: product.title,
+                requested: item.quantity,
+                available: product.stock,
+            });
+        }
+    }
+
+    if (outOfStockItems.length > 0) {
+        const err = new Error('STOCK_EXCEEDED');
+        err.outOfStockItems = outOfStockItems;
+        throw err;
+    }
+
+    // ── Build order ──
     const orderItems = cartItems.map((item) => {
         const product = getProductById(item.productId);
         return {
@@ -213,6 +243,14 @@ function createOrder(shippingAddress, cartItems) {
             weekday: 'short',
         }),
     };
+
+    // ── Decrement stock ──
+    for (const item of cartItems) {
+        const product = getProductById(item.productId);
+        if (product) {
+            product.stock = Math.max(0, product.stock - item.quantity);
+        }
+    }
 
     orders.unshift(order);
     clearCart();

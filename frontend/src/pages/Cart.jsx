@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import TotalCost from './components/TotalCost';
+import OutOfStockPopup from './components/OutOfStockPopup';
 import { ChevronDown, Minus, Plus } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -13,6 +14,9 @@ export default function Cart() {
     const { cartItems, updateQuantity, removeFromCart } = useCart();
     const [products, setProducts] = useState({});
     const [loading, setLoading] = useState(true);
+
+    // Out-of-stock popup state
+    const [stockPopup, setStockPopup] = useState({ open: false, name: '', stock: 0 });
 
     // Fetch full product details for cart items
     useEffect(() => {
@@ -61,6 +65,36 @@ export default function Cart() {
     const discount = totalOriginal - subtotal;
     const deliveryCharge = subtotal > 500 ? 0 : 40;
     const total = subtotal + deliveryCharge;
+
+    // ── Stock-checked quantity increase ──
+    const handleIncrease = (item) => {
+        const product = products[String(item.productId)];
+        if (product && item.quantity >= product.stock) {
+            setStockPopup({
+                open: true,
+                name: product.title,
+                stock: product.stock,
+            });
+            return;
+        }
+        updateQuantity(item.productId, item.quantity + 1);
+    };
+
+    // ── Stock-checked "Place Order" ──
+    const handlePlaceOrder = () => {
+        // Validate stock for all items
+        for (const item of enrichedItems) {
+            if (item.quantity > item.product.stock) {
+                setStockPopup({
+                    open: true,
+                    name: item.product.title,
+                    stock: item.product.stock,
+                });
+                return;
+            }
+        }
+        navigate('/checkout');
+    };
 
     if (loading) {
         return (
@@ -136,7 +170,7 @@ export default function Cart() {
                                                             {item.quantity}
                                                         </div>
                                                         <button
-                                                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                                                            onClick={() => handleIncrease(item)}
                                                             className="w-6 h-6 rounded-full border border-[#e0e0e0] flex items-center justify-center text-[#878787] hover:bg-gray-50"
                                                         >
                                                             <Plus size={12} />
@@ -199,7 +233,7 @@ export default function Cart() {
 
                                 <div className="sticky bottom-0 bg-white border-t shadow-[0_-2px_4px_rgba(0,0,0,0.04)] px-4 py-2.5 flex justify-end">
                                     <button
-                                        onClick={() => navigate('/checkout')}
+                                        onClick={handlePlaceOrder}
                                         className="bg-[#fb641b] hover:bg-[#f55a0e] text-white font-medium px-12 py-3 text-sm rounded-sm shadow-sm uppercase tracking-wide"
                                     >
                                         Place Order
@@ -233,6 +267,14 @@ export default function Cart() {
             </main>
 
             <Footer />
+
+            {/* Out of Stock Popup */}
+            <OutOfStockPopup
+                isOpen={stockPopup.open}
+                onClose={() => setStockPopup({ open: false, name: '', stock: 0 })}
+                productName={stockPopup.name}
+                availableStock={stockPopup.stock}
+            />
         </div>
     );
 }

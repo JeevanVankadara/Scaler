@@ -33,6 +33,13 @@ router.post('/', (req, res) => {
         const order = store.createOrder(shippingAddress, cartItems);
         res.status(201).json({ success: true, order });
     } catch (err) {
+        if (err.message === 'STOCK_EXCEEDED') {
+            return res.status(400).json({
+                success: false,
+                message: 'Some items exceed available stock',
+                outOfStockItems: err.outOfStockItems,
+            });
+        }
         res.status(500).json({ success: false, message: err.message });
     }
 });

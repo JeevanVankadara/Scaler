@@ -13,13 +13,9 @@ export default function StickyBuyBar({ price, onAddToCart, onBuyNow }) {
       >
         <ShoppingCart size={22} />
       </button>
-      <button className="flex-1 border border-gray-300 rounded-xl h-12 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors">
-        <span className="text-sm font-medium leading-none">Buy with EMI</span>
-        <span className="text-xs text-[#878787] mt-0.5">From Rs. 5,000/m</span>
-      </button>
       <button
         onClick={onBuyNow}
-        className="flex-[1.3] bg-[#ffc200] hover:bg-[#ffb800] rounded-xl h-12 flex flex-col items-center justify-center transition-colors"
+        className="flex-1 bg-[#ffc200] hover:bg-[#ffb800] rounded-xl h-12 flex flex-col items-center justify-center transition-colors"
       >
         <span className="text-sm font-medium leading-none">Buy now</span>
         <span className="text-xs leading-none mt-0.5">at {formatPrice(price)}</span>
