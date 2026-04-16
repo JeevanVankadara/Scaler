@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
@@ -12,7 +12,13 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Checkout() {
     const navigate = useNavigate();
-    const { cartItems, placeOrder, profile, updateProfile } = useCart();
+    const [searchParams] = useSearchParams();
+    const isBuyNow = searchParams.get('buyNow') === 'true';
+
+    const { cartItems, buyNowItem, placeOrder, clearBuyNow, profile, updateProfile } = useCart();
+
+    // Decide which items to show: buyNow single item or full cart
+    const itemsSource = isBuyNow && buyNowItem ? [buyNowItem] : cartItems;
 
     const [step, setStep] = useState(1);
     const [submitting, setSubmitting] = useState(false);
@@ -31,15 +37,23 @@ export default function Checkout() {
         state: 'Telangana',
     });
 
+    // Clean up buyNow state when navigating away from buy-now checkout
+    useEffect(() => {
+        return () => {
+            // If user navigates away without placing order, clear buyNow
+            if (isBuyNow) clearBuyNow();
+        };
+    }, [isBuyNow, clearBuyNow]);
+
     // Fetch product details for order summary
     useEffect(() => {
-        if (cartItems.length === 0) {
+        if (itemsSource.length === 0) {
             setProducts({});
             setLoadingProducts(false);
             return;
         }
 
-        const ids = cartItems.map((i) => i.productId);
+        const ids = itemsSource.map((i) => i.productId);
         fetch(`${API}/products/batch`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -57,9 +71,9 @@ export default function Checkout() {
             })
             .catch(() => { })
             .finally(() => setLoadingProducts(false));
-    }, [cartItems]);
+    }, [itemsSource.length]);
 
-    const enrichedItems = cartItems
+    const enrichedItems = itemsSource
         .map((item) => {
             const product = products[String(item.productId)];
             if (!product) return null;
@@ -126,7 +140,7 @@ export default function Checkout() {
         }
     };
 
-    if (cartItems.length === 0) {
+    if (itemsSource.length === 0) {
         return (
             <div className="min-h-screen bg-[#f1f3f6] flex flex-col">
                 <NavBar />

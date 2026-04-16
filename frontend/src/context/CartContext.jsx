@@ -8,6 +8,8 @@ const ORDERS_KEY = 'flipkart_orders';
 const WISHLIST_KEY = 'flipkart_wishlist';
 const PROFILE_KEY = 'flipkart_profile';
 
+const MAX_QTY = 6;
+
 const DEFAULT_PROFILE = {
     firstName: 'Jeevan',
     lastName: '',
@@ -39,6 +41,9 @@ export function CartProvider({ children }) {
         } catch { return DEFAULT_PROFILE; }
     });
 
+    // ── Buy Now: single-item checkout (session only, not persisted) ──
+    const [buyNowItem, setBuyNowItemState] = useState(null);
+
     useEffect(() => {
         localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
     }, [cartItems]);
@@ -68,13 +73,14 @@ export function CartProvider({ children }) {
         setCartItems((prev) => {
             const existing = prev.find((i) => String(i.productId) === String(productId));
             if (existing) {
+                const newQty = Math.min(existing.quantity + quantity, MAX_QTY);
                 return prev.map((i) =>
                     String(i.productId) === String(productId)
-                        ? { ...i, quantity: i.quantity + quantity }
+                        ? { ...i, quantity: newQty }
                         : i
                 );
             }
-            return [...prev, { productId: String(productId), quantity }];
+            return [...prev, { productId: String(productId), quantity: Math.min(quantity, MAX_QTY) }];
         });
 
         // Also sync to backend (fire-and-forget)
@@ -90,9 +96,10 @@ export function CartProvider({ children }) {
             removeFromCart(productId);
             return;
         }
+        const clampedQty = Math.min(quantity, MAX_QTY);
         setCartItems((prev) =>
             prev.map((i) =>
-                String(i.productId) === String(productId) ? { ...i, quantity } : i
+                String(i.productId) === String(productId) ? { ...i, quantity: clampedQty } : i
             )
         );
     }, []);
@@ -105,8 +112,19 @@ export function CartProvider({ children }) {
         setCartItems([]);
     }, []);
 
+    // ── Buy Now helpers ──
+    const setBuyNow = useCallback((productId, quantity) => {
+        setBuyNowItemState({ productId: String(productId), quantity: Math.min(quantity, MAX_QTY) });
+    }, []);
+
+    const clearBuyNow = useCallback(() => {
+        setBuyNowItemState(null);
+    }, []);
+
     const placeOrder = useCallback(async (shippingAddress) => {
-        if (cartItems.length === 0) return null;
+        // Decide which items to order: buyNowItem (single) or full cart
+        const itemsToOrder = buyNowItem ? [buyNowItem] : cartItems;
+        if (itemsToOrder.length === 0) return null;
 
         // Get email from profile (backed by localStorage) for order confirmation
         const email = profile.email || '';
@@ -115,13 +133,22 @@ export function CartProvider({ children }) {
             const res = await fetch(`${API}/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ shippingAddress, cartItems, email }),
+                body: JSON.stringify({ shippingAddress, cartItems: itemsToOrder, email }),
             });
             const data = await res.json();
 
             if (data.success) {
                 setOrders((prev) => [data.order, ...prev]);
-                clearCart();
+
+                if (buyNowItem) {
+                    // Remove the single item from cart (if it exists there)
+                    setCartItems((prev) =>
+                        prev.filter((i) => String(i.productId) !== String(buyNowItem.productId))
+                    );
+                    clearBuyNow();
+                } else {
+                    clearCart();
+                }
                 return data.order;
             }
         } catch {
@@ -132,7 +159,7 @@ export function CartProvider({ children }) {
 
             const order = {
                 orderId,
-                items: cartItems.map((i) => ({
+                items: itemsToOrder.map((i) => ({
                     productId: i.productId,
                     quantity: i.quantity,
                 })),
@@ -147,11 +174,19 @@ export function CartProvider({ children }) {
                 }),
             };
             setOrders((prev) => [order, ...prev]);
-            clearCart();
+
+            if (buyNowItem) {
+                setCartItems((prev) =>
+                    prev.filter((i) => String(i.productId) !== String(buyNowItem.productId))
+                );
+                clearBuyNow();
+            } else {
+                clearCart();
+            }
             return order;
         }
         return null;
-    }, [cartItems, clearCart, profile]);
+    }, [cartItems, clearCart, profile, buyNowItem, clearBuyNow]);
 
     const toggleWishlist = useCallback((productId) => {
         const pid = String(productId);
@@ -166,6 +201,7 @@ export function CartProvider({ children }) {
         setOrders([]);
         setWishlistIds([]);
         setProfile(DEFAULT_PROFILE);
+        setBuyNowItemState(null);
         localStorage.removeItem(CART_KEY);
         localStorage.removeItem(ORDERS_KEY);
         localStorage.removeItem(WISHLIST_KEY);
@@ -185,6 +221,7 @@ export function CartProvider({ children }) {
                 orders,
                 wishlistIds,
                 profile,
+                buyNowItem,
                 addToCart,
                 updateQuantity,
                 removeFromCart,
@@ -193,6 +230,8 @@ export function CartProvider({ children }) {
                 toggleWishlist,
                 isInWishlist,
                 updateProfile,
+                setBuyNow,
+                clearBuyNow,
                 logout,
             }}
         >
