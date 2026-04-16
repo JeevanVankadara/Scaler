@@ -6,7 +6,8 @@ A fully responsive, full-stack Single Page Application (SPA) that closely replic
 
 ## 🌐 Live Demo
 
-> **👉 [https://flipkart-clone-jeevan.onrender.com/](https://flipkart-clone-jeevan.onrender.com/)**
+👉 https://flipkart-clone-jeevan.onrender.com/  
+**Note:** The server may take some time to start when hosted on Render due to cold starts.
 
 ---
 
