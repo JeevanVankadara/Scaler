@@ -21,12 +21,14 @@ export default function SearchResults() {
   // Client-side filters
   const [sortOrder, setSortOrder] = useState('');
   const [selectedBrands, setSelectedBrands] = useState([]);
+  const [minRating, setMinRating] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100000);
 
   // Reset filters when query or category changes
   useEffect(() => {
     setSortOrder('');
     setSelectedBrands([]);
+    setMinRating(0);
     setMaxPrice(100000);
   }, [query, categoryParam]);
 
@@ -66,12 +68,17 @@ export default function SearchResults() {
       results = results.filter((p) => p.price <= maxPrice);
     }
 
+    // Rating filter
+    if (minRating > 0) {
+      results = results.filter((p) => p.rating >= minRating);
+    }
+
     // Sort
     if (sortOrder === 'low-high') results.sort((a, b) => a.price - b.price);
     else if (sortOrder === 'high-low') results.sort((a, b) => b.price - a.price);
 
     return results;
-  }, [allProducts, selectedBrands, maxPrice, sortOrder]);
+  }, [allProducts, selectedBrands, maxPrice, minRating, sortOrder]);
 
   return (
     <div className="min-h-screen bg-[#f1f3f6] flex flex-col">
@@ -85,6 +92,8 @@ export default function SearchResults() {
               brands={brands}
               selectedBrands={selectedBrands}
               onBrandChange={setSelectedBrands}
+              minRating={minRating}
+              onRatingChange={setMinRating}
               maxPrice={maxPrice}
               onPriceChange={setMaxPrice}
             />

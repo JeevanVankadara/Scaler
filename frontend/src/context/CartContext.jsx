@@ -108,11 +108,14 @@ export function CartProvider({ children }) {
     const placeOrder = useCallback(async (shippingAddress) => {
         if (cartItems.length === 0) return null;
 
+        // Get email from profile (backed by localStorage) for order confirmation
+        const email = profile.email || '';
+
         try {
             const res = await fetch(`${API}/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ shippingAddress, cartItems }),
+                body: JSON.stringify({ shippingAddress, cartItems, email }),
             });
             const data = await res.json();
 
@@ -148,7 +151,7 @@ export function CartProvider({ children }) {
             return order;
         }
         return null;
-    }, [cartItems, clearCart]);
+    }, [cartItems, clearCart, profile]);
 
     const toggleWishlist = useCallback((productId) => {
         const pid = String(productId);

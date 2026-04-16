@@ -14,11 +14,11 @@ const pool = new Pool({
 
 // Prevent crashes from idle connection resets (common with Supabase pooler)
 pool.on('error', (err) => {
-    console.warn('⚠️  Idle DB client error (non-fatal):', err.message);
+    console.warn('Idle DB client error (non-fatal):', err.message);
 });
 
 pool.query('SELECT NOW()')
-    .then(() => console.log('✅ Connected to Neon PostgreSQL'))
-    .catch((err) => console.error('❌ DB connection error:', err.message));
+    .then(() => console.log('Connected to SupaBase PostgreSQL'))
+    .catch((err) => console.error('DB connection error:', err.message));
 
 module.exports = pool;

@@ -7,6 +7,8 @@ export default function ProductFilters({
     brands = [],
     selectedBrands = [],
     onBrandChange = () => { },
+    minRating = 0,
+    onRatingChange = () => { },
     maxPrice = 100000,
     onPriceChange = () => { },
 }) {
@@ -85,6 +87,27 @@ export default function ProductFilters({
                                 className="w-4 h-4 accent-[#2874f0] rounded border-gray-300"
                             />
                             <span className="text-sm text-[#212121]">{b}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            {/* CUSTOMER RATINGS */}
+            <div className="px-4 py-4 border-b">
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-medium text-[#212121] uppercase">Customer Ratings</h3>
+                    <ChevronUp size={16} className="text-gray-500" />
+                </div>
+                <div className="space-y-3">
+                    {[4, 3, 2].map((star) => (
+                        <label key={star} className="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={minRating === star}
+                                onChange={() => onRatingChange(minRating === star ? 0 : star)}
+                                className="w-4 h-4 accent-[#2874f0] rounded border-gray-300"
+                            />
+                            <span className="text-sm text-[#212121]">{star}★ & above</span>
                         </label>
                     ))}
                 </div>

@@ -22,13 +22,35 @@ export default function ProductGallery({ images, productName }) {
   return (
     <div className="relative lg:sticky top-20">
       <div className="bg-white border border-[#e8e8e8] rounded-sm p-5 lg:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-        <div className="min-h-[360px] md:min-h-[470px] flex items-center justify-center bg-[#ffffff]">
+        <div className="relative min-h-[360px] md:min-h-[470px] flex items-center justify-center bg-[#ffffff]">
+          {safeImages.length > 1 && (
+            <button
+              type="button"
+              onClick={showPrevious}
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-md text-gray-500 hover:text-[#2874f0] transition-colors opacity-80 hover:opacity-100 z-10"
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          )}
+          
           <img
             src={activeImage}
             alt={productName}
             loading="lazy"
-            className="max-h-[380px] md:max-h-[430px] w-full object-contain"
+            className="max-h-[380px] md:max-h-[430px] w-full object-contain px-12"
           />
+          
+          {safeImages.length > 1 && (
+            <button
+              type="button"
+              onClick={showNext}
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-md text-gray-500 hover:text-[#2874f0] transition-colors opacity-80 hover:opacity-100 z-10"
+              aria-label="Next image"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
         </div>
 
         <div className="mt-8 flex items-center justify-center gap-4">

@@ -1,0 +1,824 @@
+{
+    "categories": [
+        {
+            "id": "for-you",
+            "label": "For You",
+            "icon": "/small-components/For-you.svg"
+        },
+        {
+            "id": "fashion",
+            "label": "Fashion",
+            "icon": "/small-components/fashion.svg"
+        },
+        {
+            "id": "mobiles",
+            "label": "Mobiles",
+            "icon": "/small-components/mobiles.svg"
+        },
+        {
+            "id": "beauty",
+            "label": "Beauty",
+            "icon": "/small-components/beauty.svg"
+        },
+        {
+            "id": "electronics",
+            "label": "Electronics",
+            "icon": "/small-components/electronics.svg"
+        },
+        {
+            "id": "home",
+            "label": "Home",
+            "icon": "/small-components/home-final.svg"
+        },
+        {
+            "id": "appliances",
+            "label": "Appliances",
+            "icon": "/small-components/appliances.svg"
+        },
+        {
+            "id": "toys",
+            "label": "Toys, baby products",
+            "icon": "/small-components/toys.svg"
+        },
+        {
+            "id": "food",
+            "label": "Food & Healthcare",
+            "icon": "/small-components/food.svg"
+        },
+        {
+            "id": "sports",
+            "label": "Sports & Fitness",
+            "icon": "/small-components/sport.svg"
+        },
+        {
+            "id": "books",
+            "label": "Books & More",
+            "icon": "/small-components/books.svg"
+        },
+        {
+            "id": "furniture",
+            "label": "Furniture",
+            "icon": "/small-components/furniture.svg"
+        }
+    ],
+    "banners": [
+        "/posters/AC.webp",
+        "/posters/speakers.webp",
+        "/posters/Samsung-phone.webp",
+        "/posters/watches.webp"
+    ],
+    "homeSections": [
+        {
+            "title": "Top Smartphones Under Budget",
+            "bgColor": "#e3f2fd",
+            "categoryId": "mobiles",
+            "productIds": [
+                "1",
+                "2",
+                "3",
+                "4"
+            ]
+        },
+        {
+            "title": "Fashion Picks for Everyone",
+            "bgColor": "#fff3e0",
+            "categoryId": "fashion",
+            "productIds": [
+                "5",
+                "6",
+                "7",
+                "8"
+            ]
+        },
+        {
+            "title": "Sports & Fitness Essentials",
+            "bgColor": "#e8f5e9",
+            "categoryId": "sports",
+            "productIds": [
+                "9",
+                "10",
+                "11",
+                "12"
+            ]
+        },
+        {
+            "title": "Beauty & Skincare Favourites",
+            "bgColor": "#fce4ec",
+            "categoryId": "beauty",
+            "productIds": [
+                "13",
+                "14",
+                "15",
+                "16"
+            ]
+        },
+        {
+            "title": "Groceries & Food Picks",
+            "bgColor": "#f3e5f5",
+            "categoryId": "food",
+            "productIds": [
+                "17",
+                "18",
+                "19",
+                "20"
+            ]
+        },
+        {
+            "title": "Home Decoration & Furniture",
+            "bgColor": "#ffe0b2",
+            "categoryId": "furniture",
+            "productIds": [
+                "21",
+                "22",
+                "23",
+                "24"
+            ]
+        }
+    ],
+    "products": [
+        {
+            "id": "1",
+            "title": "Samsung Galaxy S7",
+            "brand": "Samsung",
+            "category": "Mobiles",
+            "categoryId": "mobiles",
+            "price": 29999,
+            "originalPrice": 39999,
+            "discountLabel": "25% off",
+            "rating": 4.4,
+            "reviews": "14,230 Ratings",
+            "reviewCount": 14230,
+            "fAssured": true,
+            "stock": 80,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S7/1.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S7/2.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S7/3.png"
+            ],
+            "highlights": [
+                "4 GB RAM | 32 GB Storage",
+                "5.1 inch Super AMOLED Display",
+                "12MP Dual Pixel Camera | 3000 mAh Battery"
+            ],
+            "description": [
+                "Samsung Galaxy S7 delivers a gorgeous Super AMOLED display with vivid colours and deep blacks.",
+                "The 12MP Dual Pixel camera captures sharp photos even in low light conditions."
+            ]
+        },
+        {
+            "id": "2",
+            "title": "Samsung Galaxy S8",
+            "brand": "Samsung",
+            "category": "Mobiles",
+            "categoryId": "mobiles",
+            "price": 34999,
+            "originalPrice": 44999,
+            "discountLabel": "22% off",
+            "rating": 3.9,
+            "reviews": "18,901 Ratings",
+            "reviewCount": 18901,
+            "fAssured": true,
+            "stock": 65,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S8/1.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S8/2.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S8/3.png"
+            ],
+            "highlights": [
+                "4 GB RAM | 64 GB Storage",
+                "5.8 inch Infinity Display",
+                "12MP Camera | Iris Scanner"
+            ],
+            "description": [
+                "Samsung Galaxy S8 features the revolutionary Infinity Display with virtually no bezels.",
+                "Iris scanner and facial recognition provide advanced security features."
+            ]
+        },
+        {
+            "id": "3",
+            "title": "Samsung Galaxy S10",
+            "brand": "Samsung",
+            "category": "Mobiles",
+            "categoryId": "mobiles",
+            "price": 42999,
+            "originalPrice": 56999,
+            "discountLabel": "24% off",
+            "rating": 3.5,
+            "reviews": "22,345 Ratings",
+            "reviewCount": 22345,
+            "fAssured": true,
+            "stock": 55,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S10/1.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S10/2.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S10/3.png"
+            ],
+            "highlights": [
+                "8 GB RAM | 128 GB Storage",
+                "6.1 inch Dynamic AMOLED Display",
+                "Triple Camera Setup | Ultrasonic Fingerprint"
+            ],
+            "description": [
+                "Samsung Galaxy S10 sports a stunning Dynamic AMOLED display and triple rear camera system.",
+                "Ultrasonic in-display fingerprint scanner delivers fast and secure unlocking."
+            ]
+        },
+        {
+            "id": "4",
+            "title": "iPhone 13 Pro",
+            "brand": "Apple",
+            "category": "Mobiles",
+            "categoryId": "mobiles",
+            "price": 89999,
+            "originalPrice": 119900,
+            "discountLabel": "24% off",
+            "rating": 3.5,
+            "reviews": "45,678 Ratings",
+            "reviewCount": 45678,
+            "fAssured": true,
+            "stock": 40,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/smartphones/iPhone%2013%20Pro/1.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/iPhone%2013%20Pro/2.png",
+                "https://cdn.dummyjson.com/products/images/smartphones/iPhone%2013%20Pro/3.png"
+            ],
+            "highlights": [
+                "6 GB RAM | 128 GB Storage",
+                "6.1 inch Super Retina XDR ProMotion 120Hz",
+                "Triple 12MP Pro Camera | A15 Bionic Chip"
+            ],
+            "description": [
+                "iPhone 13 Pro features the blazing-fast A15 Bionic chip and ProMotion 120Hz display.",
+                "The pro camera system with macro photography and Cinematic mode takes stunning videos."
+            ]
+        },
+        {
+            "id": "5",
+            "title": "Blue & Black Check Shirt",
+            "brand": "H&M",
+            "category": "Fashion",
+            "categoryId": "fashion",
+            "price": 799,
+            "originalPrice": 1499,
+            "discountLabel": "46% off",
+            "rating": 3.8,
+            "reviews": "7,234 Ratings",
+            "reviewCount": 7234,
+            "fAssured": false,
+            "stock": 200,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/mens-shirts/Blue%20&%20Black%20Check%20Shirt/1.png",
+                "https://cdn.dummyjson.com/products/images/mens-shirts/Blue%20&%20Black%20Check%20Shirt/2.png",
+                "https://cdn.dummyjson.com/products/images/mens-shirts/Blue%20&%20Black%20Check%20Shirt/3.png",
+                "https://cdn.dummyjson.com/products/images/mens-shirts/Blue%20&%20Black%20Check%20Shirt/4.png"
+            ],
+            "highlights": [
+                "Pure Cotton Fabric",
+                "Classic Check Pattern",
+                "Regular Fit | Machine Washable"
+            ],
+            "description": [
+                "A classic blue and black check shirt crafted from soft cotton, ideal for casual and semi-formal wear.",
+                "Easy machine wash care makes it a practical everyday wardrobe staple."
+            ]
+        },
+        {
+            "id": "6",
+            "title": "Nike Air Jordan 1 Red And Black",
+            "brand": "Nike",
+            "category": "Fashion",
+            "categoryId": "fashion",
+            "price": 8999,
+            "originalPrice": 14999,
+            "discountLabel": "40% off",
+            "rating": 3.9,
+            "reviews": "15,678 Ratings",
+            "reviewCount": 15678,
+            "fAssured": true,
+            "stock": 90,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/1.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/2.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/3.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/4.png"
+            ],
+            "highlights": [
+                "Iconic Red & Black Colourway",
+                "Genuine Leather Upper",
+                "Air-Sole Unit for Cushioning"
+            ],
+            "description": [
+                "The Nike Air Jordan 1 in the iconic red and black colourway is a timeless sneaker for collectors and enthusiasts.",
+                "Genuine leather upper with Air-Sole cushioning delivers both style and all-day comfort."
+            ]
+        },
+        {
+            "id": "7",
+            "title": "Puma Future Rider Trainers",
+            "brand": "Puma",
+            "category": "Fashion",
+            "categoryId": "fashion",
+            "price": 4999,
+            "originalPrice": 7999,
+            "discountLabel": "37% off",
+            "rating": 4.2,
+            "reviews": "9,876 Ratings",
+            "reviewCount": 9876,
+            "fAssured": true,
+            "stock": 150,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Puma%20Future%20Rider%20Trainers/1.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Puma%20Future%20Rider%20Trainers/2.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Puma%20Future%20Rider%20Trainers/3.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Puma%20Future%20Rider%20Trainers/4.png"
+            ],
+            "highlights": [
+                "Retro Running Style",
+                "Federbein Foam Midsole",
+                "Breathable Mesh & Suede Upper"
+            ],
+            "description": [
+                "Puma Future Rider Trainers combine retro running aesthetics with modern comfort technology.",
+                "The Federbein foam midsole cushions every step while the mesh upper keeps feet cool."
+            ]
+        },
+        {
+            "id": "8",
+            "title": "Adidas Ultra Boost Running Shoes",
+            "brand": "Adidas",
+            "category": "Fashion",
+            "categoryId": "fashion",
+            "price": 11999,
+            "originalPrice": 17999,
+            "discountLabel": "33% off",
+            "rating": 3.9,
+            "reviews": "21,456 Ratings",
+            "reviewCount": 21456,
+            "fAssured": true,
+            "stock": 70,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Adidas%20Ultra%20Boost%20Running%20Shoes/1.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Adidas%20Ultra%20Boost%20Running%20Shoes/2.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Adidas%20Ultra%20Boost%20Running%20Shoes/3.png",
+                "https://cdn.dummyjson.com/products/images/mens-shoes/Adidas%20Ultra%20Boost%20Running%20Shoes/4.png"
+            ],
+            "highlights": [
+                "Boost Midsole Technology",
+                "Primeknit Adaptive Upper",
+                "Continental Rubber Outsole"
+            ],
+            "description": [
+                "Adidas Ultra Boost delivers an incredible energy return with every stride thanks to Boost midsole technology.",
+                "The Primeknit upper adapts to your foot shape while Continental rubber provides superior grip."
+            ]
+        },
+        {
+            "id": "9",
+            "title": "Cricket Bat (Full Size, Premium Willow)",
+            "brand": "SG",
+            "category": "Sports",
+            "categoryId": "sports",
+            "price": 1899,
+            "originalPrice": 2999,
+            "discountLabel": "36% off",
+            "rating": 3.9,
+            "reviews": "8,567 Ratings",
+            "reviewCount": 8567,
+            "fAssured": false,
+            "stock": 120,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/sports-accessories/Cricket%20Bat/1.png"
+            ],
+            "highlights": [
+                "Premium Willow Wood",
+                "Full Size for Adults",
+                "Cane Handle for Better Grip"
+            ],
+            "description": [
+                "A premium willow cricket bat with a full cane handle for powerful shots and reliable grip.",
+                "Suitable for both leather ball and tennis ball cricket at all levels."
+            ]
+        },
+        {
+            "id": "10",
+            "title": "Cricket Helmet (Adult, Adjustable)",
+            "brand": "SG",
+            "category": "Sports",
+            "categoryId": "sports",
+            "price": 1499,
+            "originalPrice": 2499,
+            "discountLabel": "40% off",
+            "rating": 4,
+            "reviews": "5,234 Ratings",
+            "reviewCount": 5234,
+            "fAssured": false,
+            "stock": 100,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/sports-accessories/Cricket%20Helmet/1.png"
+            ],
+            "highlights": [
+                "High-Impact ABS Shell",
+                "Adjustable Chin Strap",
+                "Steel Grille Face Guard"
+            ],
+            "description": [
+                "A durable cricket helmet with a high-impact ABS shell and steel grille for maximum face protection.",
+                "Adjustable chin strap and inner padding ensure a snug, comfortable fit during play."
+            ]
+        },
+        {
+            "id": "11",
+            "title": "Football (Official Size 5, Match Quality)",
+            "brand": "Nivia",
+            "category": "Sports",
+            "categoryId": "sports",
+            "price": 899,
+            "originalPrice": 1499,
+            "discountLabel": "40% off",
+            "rating": 3.9,
+            "reviews": "11,234 Ratings",
+            "reviewCount": 11234,
+            "fAssured": false,
+            "stock": 250,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/sports-accessories/Football/1.png"
+            ],
+            "highlights": [
+                "Official Size 5",
+                "Hand-Stitched Construction",
+                "All-Weather Synthetic Leather"
+            ],
+            "description": [
+                "Official size 5 football with hand-stitched panels for consistent flight and bounce.",
+                "All-weather synthetic leather outer makes it perfect for playing on any surface."
+            ]
+        },
+        {
+            "id": "12",
+            "title": "Tennis Racket (Graphite, 27 inch)",
+            "brand": "Wilson",
+            "category": "Sports",
+            "categoryId": "sports",
+            "price": 2499,
+            "originalPrice": 3999,
+            "discountLabel": "37% off",
+            "rating": 3.2,
+            "reviews": "3,456 Ratings",
+            "reviewCount": 3456,
+            "fAssured": false,
+            "stock": 80,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/sports-accessories/Tennis%20Racket/1.png"
+            ],
+            "highlights": [
+                "Graphite Frame Construction",
+                "27 inch Standard Length",
+                "Pre-Strung & Ready to Play"
+            ],
+            "description": [
+                "A lightweight graphite tennis racket with a 27-inch frame for powerful baseline shots.",
+                "Pre-strung and ready to play out of the box, ideal for intermediate players."
+            ]
+        },
+        {
+            "id": "13",
+            "title": "Essence Mascara Lash Princess",
+            "brand": "Essence",
+            "category": "Beauty",
+            "categoryId": "beauty",
+            "price": 499,
+            "originalPrice": 799,
+            "discountLabel": "37% off",
+            "rating": 3.4,
+            "reviews": "32,567 Ratings",
+            "reviewCount": 32567,
+            "fAssured": true,
+            "stock": 500,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/1.png",
+                "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/2.png",
+                "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/3.png"
+            ],
+            "highlights": [
+                "Volume & Length Formula",
+                "Conic Fibre Brush",
+                "Cruelty-Free | Long Lasting"
+            ],
+            "description": [
+                "Essence Lash Princess mascara delivers dramatic volume and sculpted length with its conic fibre brush.",
+                "Cruelty-free formula lasts all day without smudging or flaking."
+            ]
+        },
+        {
+            "id": "14",
+            "title": "Eyeshadow Palette with Mirror",
+            "brand": "Glamour Beauty",
+            "category": "Beauty",
+            "categoryId": "beauty",
+            "price": 899,
+            "originalPrice": 1499,
+            "discountLabel": "40% off",
+            "rating": 3.6,
+            "reviews": "12,890 Ratings",
+            "reviewCount": 12890,
+            "fAssured": false,
+            "stock": 300,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/beauty/Eyeshadow%20Palette%20with%20Mirror/1.png",
+                "https://cdn.dummyjson.com/products/images/beauty/Eyeshadow%20Palette%20with%20Mirror/2.png"
+            ],
+            "highlights": [
+                "12 Highly Pigmented Shades",
+                "Built-In Mirror",
+                "Matte & Shimmer Finishes"
+            ],
+            "description": [
+                "A versatile eyeshadow palette with 12 richly pigmented shades in matte and shimmer finishes.",
+                "Built-in mirror makes it perfect for on-the-go touch-ups and travel."
+            ]
+        },
+        {
+            "id": "15",
+            "title": "Powder Canister (Translucent Setting Powder)",
+            "brand": "Glamour Beauty",
+            "category": "Beauty",
+            "categoryId": "beauty",
+            "price": 649,
+            "originalPrice": 999,
+            "discountLabel": "35% off",
+            "rating": 3,
+            "reviews": "6,789 Ratings",
+            "reviewCount": 6789,
+            "fAssured": false,
+            "stock": 400,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/beauty/Powder%20Canister/1.png",
+                "https://cdn.dummyjson.com/products/images/beauty/Powder%20Canister/2.png"
+            ],
+            "highlights": [
+                "Translucent Setting Formula",
+                "Oil Control | Matte Finish",
+                "Lightweight & Breathable"
+            ],
+            "description": [
+                "Translucent setting powder that controls oil and sets makeup for a flawless matte finish all day.",
+                "Lightweight formula feels breathable on the skin without clogging pores."
+            ]
+        },
+        {
+            "id": "16",
+            "title": "Red Lipstick (Matte Finish, Long Lasting)",
+            "brand": "Glamour Beauty",
+            "category": "Beauty",
+            "categoryId": "beauty",
+            "price": 399,
+            "originalPrice": 699,
+            "discountLabel": "42% off",
+            "rating": 4.1,
+            "reviews": "18,234 Ratings",
+            "reviewCount": 18234,
+            "fAssured": true,
+            "stock": 600,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/beauty/Red%20Lipstick/1.png",
+                "https://cdn.dummyjson.com/products/images/beauty/Red%20Lipstick/2.png"
+            ],
+            "highlights": [
+                "Bold Red Matte Shade",
+                "12-Hour Long Wear",
+                "Enriched with Vitamin E"
+            ],
+            "description": [
+                "A bold red matte lipstick that delivers intense colour payoff and stays put for up to 12 hours.",
+                "Enriched with Vitamin E to keep lips moisturised while looking stunning."
+            ]
+        },
+        {
+            "id": "17",
+            "title": "Fresh Green Apples (1 kg Pack)",
+            "brand": "Farm Fresh",
+            "category": "Food",
+            "categoryId": "food",
+            "price": 149,
+            "originalPrice": 220,
+            "discountLabel": "32% off",
+            "rating": 4,
+            "reviews": "9,012 Ratings",
+            "reviewCount": 9012,
+            "fAssured": false,
+            "stock": 800,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/groceries/Apple/1.png"
+            ],
+            "highlights": [
+                "Fresh & Crisp Green Apples",
+                "Rich in Fibre & Vitamins",
+                "1 kg Economy Pack"
+            ],
+            "description": [
+                "Farm-fresh green apples hand-picked for crispness and natural sweetness.",
+                "Rich in dietary fibre and essential vitamins, perfect for a healthy daily snack."
+            ]
+        },
+        {
+            "id": "18",
+            "title": "Organic Chicken Meat (500g, Fresh Cut)",
+            "brand": "Farm Fresh",
+            "category": "Food",
+            "categoryId": "food",
+            "price": 299,
+            "originalPrice": 449,
+            "discountLabel": "33% off",
+            "rating": 3.9,
+            "reviews": "6,345 Ratings",
+            "reviewCount": 6345,
+            "fAssured": false,
+            "stock": 200,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/groceries/Chicken%20Meat/1.png",
+                "https://cdn.dummyjson.com/products/images/groceries/Chicken%20Meat/2.png"
+            ],
+            "highlights": [
+                "Organic Free-Range Chicken",
+                "Freshly Cut 500g Pack",
+                "High Protein | No Antibiotics"
+            ],
+            "description": [
+                "Organic free-range chicken meat, freshly cut and vacuum-packed for maximum freshness.",
+                "High in protein with no added antibiotics or hormones – clean and healthy eating."
+            ]
+        },
+        {
+            "id": "19",
+            "title": "Fresh Cat Fish (500g, Cleaned & Ready to Cook)",
+            "brand": "Sea Fresh",
+            "category": "Food",
+            "categoryId": "food",
+            "price": 349,
+            "originalPrice": 499,
+            "discountLabel": "30% off",
+            "rating": 3.9,
+            "reviews": "3,890 Ratings",
+            "reviewCount": 3890,
+            "fAssured": false,
+            "stock": 150,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/groceries/Cat%20Food/1.png",
+                "https://cdn.dummyjson.com/products/images/groceries/Cat%20Food/2.png"
+            ],
+            "highlights": [
+                "Freshwater Cat Fish",
+                "Cleaned & Deveined",
+                "Rich in Omega-3 Fatty Acids"
+            ],
+            "description": [
+                "Fresh catfish cleaned and ready to cook, sourced from sustainable freshwater farms.",
+                "Rich in Omega-3 fatty acids and protein for a healthy, delicious meal."
+            ]
+        },
+        {
+            "id": "20",
+            "title": "Dog Food Premium (3 kg, All Breeds)",
+            "brand": "Pedigree",
+            "category": "Food",
+            "categoryId": "food",
+            "price": 599,
+            "originalPrice": 899,
+            "discountLabel": "33% off",
+            "rating": 4.3,
+            "reviews": "22,345 Ratings",
+            "reviewCount": 22345,
+            "fAssured": true,
+            "stock": 350,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/groceries/Dog%20Food/1.png",
+                "https://cdn.dummyjson.com/products/images/groceries/Dog%20Food/2.png"
+            ],
+            "highlights": [
+                "Complete Balanced Nutrition",
+                "For All Breeds & Sizes",
+                "3 kg Value Pack"
+            ],
+            "description": [
+                "Premium dog food with complete balanced nutrition suitable for all breeds and life stages.",
+                "Fortified with vitamins and minerals for healthy skin, coat, and strong bones."
+            ]
+        },
+        {
+            "id": "21",
+            "title": "Annibale Colombo Bed (King Size, Italian Walnut)",
+            "brand": "Annibale Colombo",
+            "category": "Furniture",
+            "categoryId": "furniture",
+            "price": 89999,
+            "originalPrice": 129999,
+            "discountLabel": "30% off",
+            "rating": 4.3,
+            "reviews": "2,345 Ratings",
+            "reviewCount": 2345,
+            "fAssured": true,
+            "stock": 15,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Bed/1.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Bed/2.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Bed/3.png"
+            ],
+            "highlights": [
+                "Solid Italian Walnut Wood",
+                "King Size | Premium Craftsmanship",
+                "Elegant Classic Design"
+            ],
+            "description": [
+                "An exquisite king-size bed by Annibale Colombo crafted from solid Italian walnut wood.",
+                "Premium craftsmanship and elegant design make this a timeless bedroom centrepiece."
+            ]
+        },
+        {
+            "id": "22",
+            "title": "Annibale Colombo Sofa (3-Seater, Premium Leather)",
+            "brand": "Annibale Colombo",
+            "category": "Furniture",
+            "categoryId": "furniture",
+            "price": 74999,
+            "originalPrice": 109999,
+            "discountLabel": "31% off",
+            "rating": 3.4,
+            "reviews": "1,890 Ratings",
+            "reviewCount": 1890,
+            "fAssured": true,
+            "stock": 10,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Sofa/1.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Sofa/2.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Sofa/3.png"
+            ],
+            "highlights": [
+                "Premium Full-Grain Leather",
+                "3-Seater | Hardwood Frame",
+                "Hand-Finished Italian Design"
+            ],
+            "description": [
+                "Luxurious 3-seater sofa upholstered in premium full-grain leather over a hardwood frame.",
+                "Hand-finished Italian design brings elegance and unmatched comfort to your living room."
+            ]
+        },
+        {
+            "id": "23",
+            "title": "Bedside Table (Solid Wood, 2 Drawers)",
+            "brand": "Knoll",
+            "category": "Furniture",
+            "categoryId": "furniture",
+            "price": 8999,
+            "originalPrice": 14999,
+            "discountLabel": "40% off",
+            "rating": 3.1,
+            "reviews": "4,567 Ratings",
+            "reviewCount": 4567,
+            "fAssured": false,
+            "stock": 60,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/furniture/Bedside%20Table%20African%20Cherry/1.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Bedside%20Table%20African%20Cherry/2.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Bedside%20Table%20African%20Cherry/3.png"
+            ],
+            "highlights": [
+                "African Cherry Solid Wood",
+                "2 Spacious Drawers",
+                "Minimalist Contemporary Design"
+            ],
+            "description": [
+                "A solid African Cherry wood bedside table with 2 spacious drawers for nighttime essentials.",
+                "Minimalist contemporary design complements any bedroom decor style."
+            ]
+        },
+        {
+            "id": "24",
+            "title": "Knoll Saarinen Oval Dining Table",
+            "brand": "Knoll",
+            "category": "Furniture",
+            "categoryId": "furniture",
+            "price": 64999,
+            "originalPrice": 89999,
+            "discountLabel": "27% off",
+            "rating": 3.2,
+            "reviews": "1,234 Ratings",
+            "reviewCount": 1234,
+            "fAssured": true,
+            "stock": 8,
+            "images": [
+                "https://cdn.dummyjson.com/products/images/furniture/Knoll%20Saarinen%20Executive%20Conference%20Chair/1.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Knoll%20Saarinen%20Executive%20Conference%20Chair/2.png",
+                "https://cdn.dummyjson.com/products/images/furniture/Knoll%20Saarinen%20Executive%20Conference%20Chair/3.png"
+            ],
+            "highlights": [
+                "Iconic Mid-Century Modern Design",
+                "Marble Top | Aluminium Base",
+                "Seats 6-8 Comfortably"
+            ],
+            "description": [
+                "The iconic Knoll Saarinen table features a sleek marble top on a sculpted aluminium pedestal base.",
+                "A mid-century modern masterpiece that seats 6-8 and elevates any dining space."
+            ]
+        }
+    ]
+}

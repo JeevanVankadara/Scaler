@@ -12,7 +12,7 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Checkout() {
     const navigate = useNavigate();
-    const { cartItems, placeOrder } = useCart();
+    const { cartItems, placeOrder, profile, updateProfile } = useCart();
 
     const [step, setStep] = useState(1);
     const [submitting, setSubmitting] = useState(false);
@@ -23,13 +23,12 @@ export default function Checkout() {
     const [stockPopup, setStockPopup] = useState({ open: false, name: '', stock: 0 });
 
     const [form, setForm] = useState({
-        fullName: '',
-        phone: '',
-        pincode: '',
-        locality: '',
-        address: '',
-        city: '',
-        state: '',
+        fullName: `${profile.firstName || 'Jeevan'} ${profile.lastName || ''}`.trim(),
+        phone: profile.mobile || '9618006235',
+        email: profile.email || 'jeevanv1997@gmail.com',
+        address: 'A-5, Road-1, Sagar cements',
+        city: 'Kodad',
+        state: 'Telangana',
     });
 
     // Fetch product details for order summary
@@ -56,7 +55,7 @@ export default function Checkout() {
                     setProducts(map);
                 }
             })
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => setLoadingProducts(false));
     }, [cartItems]);
 
@@ -89,6 +88,15 @@ export default function Checkout() {
                 return;
             }
         }
+
+        // Persist name, phone, email to profile (localStorage)
+        const nameParts = form.fullName.trim().split(/\s+/);
+        updateProfile({
+            firstName: nameParts[0] || '',
+            lastName: nameParts.slice(1).join(' ') || '',
+            mobile: form.phone,
+            email: form.email,
+        });
 
         setStep(2);
     };
@@ -191,37 +199,21 @@ export default function Checkout() {
                                                 </div>
                                             </div>
 
-                                            {/* Row 2: Pincode + Locality */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                                <div>
-                                                    <label className="block text-xs text-[#878787] font-medium mb-1.5">
-                                                        Pincode
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        name="pincode"
-                                                        value={form.pincode}
-                                                        onChange={handleChange}
-                                                        className="w-full border border-[#e0e0e0] rounded-sm px-3 py-2.5 text-sm outline-none focus:border-[#2874f0]"
-                                                        placeholder="6-digit pincode"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs text-[#878787] font-medium mb-1.5">
-                                                        Locality
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        name="locality"
-                                                        value={form.locality}
-                                                        onChange={handleChange}
-                                                        className="w-full border border-[#e0e0e0] rounded-sm px-3 py-2.5 text-sm outline-none focus:border-[#2874f0]"
-                                                        placeholder="Locality/Area"
-                                                    />
-                                                </div>
+                                            {/* Row 2: Email */}
+                                            <div>
+                                                <label className="block text-xs text-[#878787] font-medium mb-1.5">
+                                                    Email Address
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    value={form.email}
+                                                    onChange={handleChange}
+                                                    className="w-full border border-[#e0e0e0] rounded-sm px-3 py-2.5 text-sm outline-none focus:border-[#2874f0]"
+                                                    placeholder="Email address"
+                                                />
                                             </div>
-
-                                            {/* Row 3: Full Address */}
+                                            {/* Row 4: Full Address */}
                                             <div>
                                                 <label className="block text-xs text-[#878787] font-medium mb-1.5">
                                                     Address (Area & Street)
@@ -236,7 +228,7 @@ export default function Checkout() {
                                                 />
                                             </div>
 
-                                            {/* Row 4: City + State */}
+                                            {/* Row 5: City + State */}
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                                 <div>
                                                     <label className="block text-xs text-[#878787] font-medium mb-1.5">
@@ -294,7 +286,7 @@ export default function Checkout() {
                                                         </span>
                                                     </p>
                                                     <p className="text-sm text-[#212121] mt-1">
-                                                        {form.address}, {form.locality}, {form.city}, {form.state} {form.pincode}
+                                                        {form.address}, {form.city}, {form.state}
                                                     </p>
                                                     <p className="text-sm text-[#212121] mt-0.5">{form.phone}</p>
                                                 </div>
