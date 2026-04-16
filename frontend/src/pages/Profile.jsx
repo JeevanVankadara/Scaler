@@ -13,6 +13,7 @@ export default function Profile() {
     const [editingPersonal, setEditingPersonal] = useState(false);
     const [editingEmail, setEditingEmail] = useState(false);
     const [editingMobile, setEditingMobile] = useState(false);
+    const [editingAddress, setEditingAddress] = useState(false);
 
     // Draft values (copy of profile while editing)
     const [draft, setDraft] = useState({ ...profile });
@@ -43,6 +44,15 @@ export default function Profile() {
     const handleCancelMobile = () => {
         setDraft((d) => ({ ...d, mobile: profile.mobile }));
         setEditingMobile(false);
+    };
+
+    const handleSaveAddress = () => {
+        updateProfile({ address: draft.address, city: draft.city, state: draft.state });
+        setEditingAddress(false);
+    };
+    const handleCancelAddress = () => {
+        setDraft((d) => ({ ...d, address: profile.address, city: profile.city, state: profile.state }));
+        setEditingAddress(false);
     };
 
     return (
@@ -244,6 +254,80 @@ export default function Profile() {
                                             <div>
                                                 <button
                                                     onClick={handleSaveMobile}
+                                                    className="mt-4 bg-[#2874f0] hover:bg-[#1c5ed8] text-white text-sm font-medium px-12 py-3 rounded-sm transition-colors"
+                                                >
+                                                    SAVE
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* ── Address Information ── */}
+                                    <div className="mt-10">
+                                        <div className="flex items-center gap-4 mb-5">
+                                            <h2 className="text-lg font-semibold text-[#212121]">Delivery Address</h2>
+                                            {!editingAddress ? (
+                                                <button
+                                                    onClick={() => { setDraft((d) => ({ ...d, address: profile.address, city: profile.city, state: profile.state })); setEditingAddress(true); }}
+                                                    className="text-sm text-[#2874f0] font-medium hover:underline"
+                                                >
+                                                    Edit
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={handleCancelAddress}
+                                                    className="text-sm text-[#878787] font-medium hover:underline"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-col gap-3 mb-5">
+                                            <input
+                                                type="text"
+                                                value={editingAddress ? draft.address : profile.address}
+                                                onChange={(e) => setDraft({ ...draft, address: e.target.value })}
+                                                disabled={!editingAddress}
+                                                className={`w-full sm:w-[500px] px-4 py-3 rounded-sm text-sm border outline-none transition-colors ${
+                                                    editingAddress
+                                                        ? 'border-[#2874f0] bg-white text-[#212121]'
+                                                        : 'border-[#e0e0e0] bg-[#f5f5f5] text-[#878787]'
+                                                }`}
+                                                placeholder="Address (Area & Street)"
+                                            />
+                                            <div className="flex flex-col sm:flex-row gap-3">
+                                                <input
+                                                    type="text"
+                                                    value={editingAddress ? draft.city : profile.city}
+                                                    onChange={(e) => setDraft({ ...draft, city: e.target.value })}
+                                                    disabled={!editingAddress}
+                                                    className={`w-full sm:w-[244px] px-4 py-3 rounded-sm text-sm border outline-none transition-colors ${
+                                                        editingAddress
+                                                            ? 'border-[#2874f0] bg-white text-[#212121]'
+                                                            : 'border-[#e0e0e0] bg-[#f5f5f5] text-[#878787]'
+                                                    }`}
+                                                    placeholder="City"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={editingAddress ? draft.state : profile.state}
+                                                    onChange={(e) => setDraft({ ...draft, state: e.target.value })}
+                                                    disabled={!editingAddress}
+                                                    className={`w-full sm:w-[244px] px-4 py-3 rounded-sm text-sm border outline-none transition-colors ${
+                                                        editingAddress
+                                                            ? 'border-[#2874f0] bg-white text-[#212121]'
+                                                            : 'border-[#e0e0e0] bg-[#f5f5f5] text-[#878787]'
+                                                    }`}
+                                                    placeholder="State"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {editingAddress && (
+                                            <div>
+                                                <button
+                                                    onClick={handleSaveAddress}
                                                     className="mt-4 bg-[#2874f0] hover:bg-[#1c5ed8] text-white text-sm font-medium px-12 py-3 rounded-sm transition-colors"
                                                 >
                                                     SAVE

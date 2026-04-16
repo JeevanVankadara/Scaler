@@ -248,8 +248,10 @@ export default function NavBar() {
 
                         <div className="flex items-center gap-1.5 text-sm">
                             <img src="/location.png" alt="location" className="w-4 h-4" />
-                            <span className="text-[#212121] font-bold">Location not set</span>
-                            <button className="text-[#2a55e5] font-medium flex items-center hover:underline font-bold">
+                            <span className="text-[#212121] font-bold truncate max-w-[220px]">
+                                {profile?.address ? `${profile.address}, ${profile.city}` : 'Location not set'}
+                            </span>
+                            <button onClick={() => navigate('/profile')} className="text-[#2a55e5] font-medium flex items-center hover:underline font-bold">
                                 Select delivery location
                                 <ChevronRight size={18} className="mt-0.5" />
                             </button>
@@ -301,9 +303,8 @@ export default function NavBar() {
                                                         setActiveIndex(-1);
                                                         setSearchQuery(userQuery);
                                                     }}
-                                                    className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
-                                                        isActive ? 'bg-[#f0f5ff]' : 'hover:bg-[#f0f5ff]'
-                                                    }`}
+                                                    className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${isActive ? 'bg-[#f0f5ff]' : 'hover:bg-[#f0f5ff]'
+                                                        }`}
                                                 >
                                                     <div className="w-10 h-10 rounded-md overflow-hidden border border-[#f0f0f0] shrink-0 bg-white flex items-center justify-center">
                                                         <img src={s.image} alt="" className="w-full h-full object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
@@ -346,8 +347,8 @@ export default function NavBar() {
                                             My Orders
                                         </Link>
                                         <div className="border-t border-[#f0f0f0] my-1"></div>
-                                        <Link 
-                                            to="/" 
+                                        <Link
+                                            to="/"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 logout();
@@ -395,7 +396,7 @@ export default function NavBar() {
                                 My Orders
                             </Link>
                             <div className="border-t border-[#f0f0f0] my-1"></div>
-                            <button 
+                            <button
                                 onClick={() => {
                                     logout();
                                     setMobileMenuOpen(false);

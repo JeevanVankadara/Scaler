@@ -12,25 +12,23 @@ const MAX_QTY = 6;
 
 export default function Cart() {
     const navigate = useNavigate();
-    const { cartItems, updateQuantity, removeFromCart, setBuyNow } = useCart();
+    const { cartItems, savedItems, updateQuantity, removeFromCart, saveForLater, moveToCart, removeFromSaved, setBuyNow } = useCart();
     const [products, setProducts] = useState({});
     const [loading, setLoading] = useState(true);
-
-    // Session-only "saved for later" — resets when user navigates away
-    const [savedIds, setSavedIds] = useState([]);
 
     // Out-of-stock popup state
     const [stockPopup, setStockPopup] = useState({ open: false, name: '', stock: 0 });
 
-    // Fetch full product details for cart items
+    // Fetch full product details for cart items & saved items
     useEffect(() => {
-        if (cartItems.length === 0) {
+        const allIds = [...cartItems.map((i) => i.productId), ...savedItems.map((i) => i.productId)];
+        if (allIds.length === 0) {
             setProducts({});
             setLoading(false);
             return;
         }
 
-        const ids = cartItems.map((i) => i.productId);
+        const ids = Array.from(new Set(allIds));
         fetch(`${API}/products/batch`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -56,7 +54,7 @@ export default function Cart() {
         return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', weekday: 'short' });
     };
 
-    const enrichedItems = cartItems
+    const activeItems = cartItems
         .map((item) => {
             const product = products[String(item.productId)];
             if (!product) return null;
@@ -64,9 +62,13 @@ export default function Cart() {
         })
         .filter(Boolean);
 
-    // Split into active & saved
-    const activeItems = enrichedItems.filter((i) => !savedIds.includes(String(i.productId)));
-    const savedItems = enrichedItems.filter((i) => savedIds.includes(String(i.productId)));
+    const savedItemsEnriched = savedItems
+        .map((item) => {
+            const product = products[String(item.productId)];
+            if (!product) return null;
+            return { ...item, product };
+        })
+        .filter(Boolean);
 
     // Only active items count towards totals
     const subtotal = activeItems.reduce((s, i) => s + i.product.price * i.quantity, 0);
@@ -75,13 +77,13 @@ export default function Cart() {
     const deliveryCharge = subtotal > 500 ? 0 : 40;
     const total = subtotal + deliveryCharge;
 
-    // ── Save for later / Move to cart (session only) ──
+    // ── Save for later / Move to cart (now using Context) ──
     const handleSaveForLater = (productId) => {
-        setSavedIds((prev) => [...prev, String(productId)]);
+        saveForLater(productId);
     };
 
     const handleMoveToCart = (productId) => {
-        setSavedIds((prev) => prev.filter((id) => id !== String(productId)));
+        moveToCart(productId);
     };
 
     // ── Buy this now ──
@@ -136,7 +138,7 @@ export default function Cart() {
             <NavBar />
 
             <main className="flex-1">
-                {enrichedItems.length === 0 ? (
+                {activeItems.length === 0 && savedItemsEnriched.length === 0 ? (
                     <div className="max-w-[1250px] mx-auto py-20 text-center">
                         <p className="text-lg text-[#212121]">Your cart is empty!</p>
                         <button
@@ -191,21 +193,21 @@ export default function Cart() {
                             </div>
 
                             {/* ═══════ SAVED FOR LATER ═══════ */}
-                            {savedItems.length > 0 && (
+                            {savedItemsEnriched.length > 0 && (
                                 <div className="bg-white shadow-sm mt-3">
                                     <div className="px-4 py-3 border-b">
                                         <h2 className="text-base font-medium text-[#212121]">
-                                            Saved For Later ({savedItems.length})
+                                            Saved For Later ({savedItemsEnriched.length})
                                         </h2>
                                     </div>
 
-                                    {savedItems.map((item, idx) => (
+                                    {savedItemsEnriched.map((item, idx) => (
                                         <SavedItemCard
                                             key={item.productId}
                                             item={item}
-                                            isLast={idx === savedItems.length - 1}
+                                            isLast={idx === savedItemsEnriched.length - 1}
                                             onMoveToCart={handleMoveToCart}
-                                            onRemove={removeFromCart}
+                                            onRemove={removeFromSaved}
                                             navigate={navigate}
                                         />
                                     ))}

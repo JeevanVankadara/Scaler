@@ -9,6 +9,7 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Wishlist from './pages/Wishlist';
 import Profile from './pages/Profile';
+import WishlistToast from './pages/components/WishlistToast';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
+        <WishlistToast />
       </BrowserRouter>
     </CartProvider>
   );

@@ -4,7 +4,7 @@ function formatPrice(value) {
   return `Rs. ${value.toLocaleString('en-IN')}`;
 }
 
-export default function StickyBuyBar({ price, onAddToCart, onBuyNow }) {
+export default function StickyBuyBar({ price, onAddToCart, onBuyNow, isOutOfStock }) {
   return (
     <div className="bg-white border-t border-[#e0e0e0] shadow-[0_-2px_8px_rgba(0,0,0,0.06)] p-2.5 flex items-center gap-2 sticky bottom-0 z-10">
       <button
@@ -15,10 +15,15 @@ export default function StickyBuyBar({ price, onAddToCart, onBuyNow }) {
       </button>
       <button
         onClick={onBuyNow}
-        className="flex-1 bg-[#ffc200] hover:bg-[#ffb800] rounded-xl h-12 flex flex-col items-center justify-center transition-colors"
+        disabled={isOutOfStock}
+        className={`flex-1 rounded-xl h-12 flex flex-col items-center justify-center transition-colors ${
+          isOutOfStock 
+            ? 'bg-[#f5f5f5] cursor-not-allowed text-[#b0b0b0] border border-[#e0e0e0]' 
+            : 'bg-[#ffc200] hover:bg-[#ffb800]'
+        }`}
       >
         <span className="text-sm font-medium leading-none">Buy now</span>
-        <span className="text-xs leading-none mt-0.5">at {formatPrice(price)}</span>
+        {!isOutOfStock && <span className="text-xs leading-none mt-0.5">at {formatPrice(price)}</span>}
       </button>
     </div>
   );

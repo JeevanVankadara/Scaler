@@ -7,6 +7,7 @@ const CART_KEY = 'flipkart_cart';
 const ORDERS_KEY = 'flipkart_orders';
 const WISHLIST_KEY = 'flipkart_wishlist';
 const PROFILE_KEY = 'flipkart_profile';
+const SAVED_KEY = 'flipkart_saved';
 
 const MAX_QTY = 6;
 
@@ -16,6 +17,9 @@ const DEFAULT_PROFILE = {
     gender: '',
     email: 'jeevanv1997@gmail.com',
     mobile: '9618006235',
+    address: 'A-5, Road-1, Sagar cements',
+    city: 'Kodad',
+    state: 'Telangana',
 };
 
 function loadJSON(key, fallback = []) {
@@ -31,6 +35,7 @@ export function CartProvider({ children }) {
     const [cartItems, setCartItems] = useState(() => loadJSON(CART_KEY));
     const [orders, setOrders] = useState(() => loadJSON(ORDERS_KEY));
     const [wishlistIds, setWishlistIds] = useState(() => loadJSON(WISHLIST_KEY));
+    const [savedItems, setSavedItems] = useState(() => loadJSON(SAVED_KEY));
     const [profile, setProfile] = useState(() => {
         try {
             const raw = localStorage.getItem(PROFILE_KEY);
@@ -55,6 +60,10 @@ export function CartProvider({ children }) {
     useEffect(() => {
         localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlistIds));
     }, [wishlistIds]);
+
+    useEffect(() => {
+        localStorage.setItem(SAVED_KEY, JSON.stringify(savedItems));
+    }, [savedItems]);
 
     useEffect(() => {
         // Only persist when profile has meaningful data
@@ -110,6 +119,45 @@ export function CartProvider({ children }) {
 
     const clearCart = useCallback(() => {
         setCartItems([]);
+    }, []);
+
+    const saveForLater = useCallback((productId) => {
+        setCartItems((prev) => {
+            const item = prev.find((i) => String(i.productId) === String(productId));
+            if (item) {
+                setSavedItems((s) => {
+                    if (!s.find((i) => String(i.productId) === String(productId))) {
+                        return [...s, item];
+                    }
+                    return s;
+                });
+            }
+            return prev.filter((i) => String(i.productId) !== String(productId));
+        });
+    }, []);
+
+    const moveToCart = useCallback((productId) => {
+        setSavedItems((prev) => {
+            const item = prev.find((i) => String(i.productId) === String(productId));
+            if (item) {
+                setCartItems((c) => {
+                    const existing = c.find((i) => String(i.productId) === String(productId));
+                    if (existing) {
+                        return c.map((i) =>
+                            String(i.productId) === String(productId)
+                                ? { ...i, quantity: Math.min(i.quantity + item.quantity, MAX_QTY) }
+                                : i
+                        );
+                    }
+                    return [...c, item];
+                });
+            }
+            return prev.filter((i) => String(i.productId) !== String(productId));
+        });
+    }, []);
+
+    const removeFromSaved = useCallback((productId) => {
+        setSavedItems((prev) => prev.filter((i) => String(i.productId) !== String(productId)));
     }, []);
 
     // ── Buy Now helpers ──
@@ -188,13 +236,28 @@ export function CartProvider({ children }) {
         return null;
     }, [cartItems, clearCart, profile, buyNowItem, clearBuyNow]);
 
+    const [wishlistToast, setWishlistToastState] = useState(false);
+
+    // Timeout reference for cleaning up if clicked rapidly
+    const [wishlistTimeout, setWishlistTimeout] = useState(null);
+
     const toggleWishlist = useCallback((productId) => {
         const pid = String(productId);
         setWishlistIds((prev) => {
-            if (prev.includes(pid)) return prev.filter((id) => id !== pid);
+            if (prev.includes(pid)) {
+                return prev.filter((id) => id !== pid);
+            }
+            // Item added to wishlist
+            setWishlistToastState(true);
+            if (wishlistTimeout) clearTimeout(wishlistTimeout);
+            const timeout = setTimeout(() => {
+                setWishlistToastState(false);
+            }, 2000);
+            setWishlistTimeout(timeout);
+            
             return [...prev, pid];
         });
-    }, []);
+    }, [wishlistTimeout]);
 
     const logout = useCallback(() => {
         setCartItems([]);
@@ -202,12 +265,15 @@ export function CartProvider({ children }) {
         setWishlistIds([]);
         setProfile(DEFAULT_PROFILE);
         setBuyNowItemState(null);
+        setWishlistToastState(false);
+        if (wishlistTimeout) clearTimeout(wishlistTimeout);
         localStorage.removeItem(CART_KEY);
         localStorage.removeItem(ORDERS_KEY);
         localStorage.removeItem(WISHLIST_KEY);
         localStorage.removeItem(PROFILE_KEY);
+        localStorage.removeItem(SAVED_KEY);
         localStorage.removeItem('flipkart_user_name'); // Clear if still exists
-    }, []);
+    }, [wishlistTimeout]);
 
     const isInWishlist = useCallback((productId) => {
         return wishlistIds.includes(String(productId));
@@ -222,6 +288,7 @@ export function CartProvider({ children }) {
                 wishlistIds,
                 profile,
                 buyNowItem,
+                wishlistToast,
                 addToCart,
                 updateQuantity,
                 removeFromCart,
@@ -233,6 +300,10 @@ export function CartProvider({ children }) {
                 setBuyNow,
                 clearBuyNow,
                 logout,
+                savedItems,
+                saveForLater,
+                moveToCart,
+                removeFromSaved,
             }}
         >
             {children}

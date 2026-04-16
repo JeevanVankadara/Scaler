@@ -3,7 +3,7 @@
 -- ║  Orders handled in frontend localStorage — NOT stored here  ║
 -- ╚══════════════════════════════════════════════════════════════╝
 
-DROP TABLE IF EXISTS cart_items CASCADE;
+
 DROP TABLE IF EXISTS home_sections CASCADE;
 DROP TABLE IF EXISTS banners CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
@@ -67,25 +67,14 @@ CREATE TABLE home_sections (
     created_at  TIMESTAMP DEFAULT NOW()
 );
 
--- ══════════════════════════════════════
--- 5. CART ITEMS
--- ══════════════════════════════════════
-CREATE TABLE cart_items (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id     VARCHAR(100) NOT NULL DEFAULT 'default-user',
-    product_id  VARCHAR(50) NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-    quantity    INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW(),
-    UNIQUE(user_id, product_id)
-);
+
 
 -- ══════════════════════════════════════
 -- INDEXES
 -- ══════════════════════════════════════
 
--- ★ Category page: products sorted by price — single index scan
-CREATE INDEX idx_products_category_price ON products(category_id, price ASC);
+-- ★ Category page: products sorted by price — using id as tie-breaker
+CREATE INDEX idx_products_category_price ON products(category_id, price ASC, id ASC);
 
 -- ★ Category page: products sorted by rating — for "top rated" queries
 CREATE INDEX idx_products_category_rating ON products(category_id, rating DESC);
@@ -93,12 +82,14 @@ CREATE INDEX idx_products_category_rating ON products(category_id, rating DESC);
 CREATE INDEX idx_products_brand ON products(brand);
 CREATE INDEX idx_products_price ON products(price);
 
+-- ★ Partial index for Flipkart Assured products only
+CREATE INDEX idx_products_assured ON products(id) WHERE f_assured = TRUE;
+
 -- Full-text search GIN index
 CREATE INDEX idx_products_search ON products
     USING GIN(to_tsvector('english', title || ' ' || brand || ' ' || category));
 
--- Cart per user
-CREATE INDEX idx_cart_user ON cart_items(user_id);
+
 
 -- ══════════════════════════════════════
 -- AUTO-UPDATE TRIGGER
@@ -116,8 +107,4 @@ $$
 
 CREATE TRIGGER trg_products_updated_at
     BEFORE UPDATE ON products
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-
-CREATE TRIGGER trg_cart_updated_at
-    BEFORE UPDATE ON cart_items
     FOR EACH ROW EXECUTE FUNCTION update_updated_at();

@@ -59,6 +59,10 @@ export default function ProductCard({ product }) {
       </div>
 
       <div className="w-full md:w-[170px] shrink-0 flex flex-wrap md:flex-col items-center md:items-start gap-x-4 gap-y-1 md:gap-0 mt-1 md:mt-0">
+        {product.stock <= 0 ? (
+          <span className="text-[#c2217c] text-[17px] font-medium mt-1">Currently unavailable</span>
+        ) : (
+          <>
         <div className="flex items-center gap-2 w-full md:w-auto">
           <span className="text-xl font-medium text-[#212121]">{formatPrice(product.price)}</span>
           {product.fAssured && <img src={assuredBadge} alt="Assured" className="h-5" />}
@@ -72,7 +76,9 @@ export default function ProductCard({ product }) {
             Upto <span className="font-medium">{formatPrice(product.exchangeValue)}</span> Off on Exchange
           </p>
         )}
-        <p className="text-xs text-[#388e3c] font-medium mt-0.5">Bank Offer</p>
+            <p className="text-xs text-[#388e3c] font-medium mt-0.5">Bank Offer</p>
+          </>
+        )}
       </div>
     </article>
   );

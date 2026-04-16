@@ -19,7 +19,7 @@ function formatPrice(value) {
 export default function ProductDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { addToCart, toggleWishlist, isInWishlist } = useCart();
+    const { addToCart, toggleWishlist, isInWishlist, profile } = useCart();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -42,19 +42,12 @@ export default function ProductDetails() {
 
 
     const handleAddToCart = () => {
-        if (product.stock <= 0) {
-            setStockPopup({ open: true, name: product.title, stock: 0 });
-            return;
-        }
         addToCart(product.id);
         navigate('/cart');
     };
 
     const handleBuyNow = () => {
-        if (product.stock <= 0) {
-            setStockPopup({ open: true, name: product.title, stock: 0 });
-            return;
-        }
+        if (product.stock <= 0) return;
         addToCart(product.id);
         navigate('/checkout');
     };
@@ -175,15 +168,23 @@ export default function ProductDetails() {
                                             <span className="inline-flex bg-[#008c48] text-white text-sm font-semibold px-3 py-1 rounded-md">
                                                 Hot Deal
                                             </span>
-                                            <div className="mt-4 flex items-baseline gap-3 flex-wrap">
-                                                <span className="text-[#008c48] text-[19px] lg:text-[22px] font-semibold">{displayDiscount}</span>
-                                                <span className="text-[#878787] text-[22px] lg:text-[24px] line-through">{formatPrice(displayOriginal)}</span>
-                                                <span className="text-[#212121] text-[38px] lg:text-[46px] leading-none font-semibold">{formatPrice(displayPrice)}</span>
-                                            </div>
-                                            {product.exchangeValue > 0 && (
-                                                <p className="mt-3 text-[15px] text-[#5f6368]">
-                                                    Upto {formatPrice(product.exchangeValue)} Off on Exchange
-                                                </p>
+                                            {product.stock <= 0 ? (
+                                                <div className="mt-5">
+                                                    <span className="text-[#c2217c] text-[24px] font-medium">Currently unavailable</span>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="mt-4 flex items-baseline gap-3 flex-wrap">
+                                                        <span className="text-[#008c48] text-[19px] lg:text-[22px] font-semibold">{displayDiscount}</span>
+                                                        <span className="text-[#878787] text-[22px] lg:text-[24px] line-through">{formatPrice(displayOriginal)}</span>
+                                                        <span className="text-[#212121] text-[38px] lg:text-[46px] leading-none font-semibold">{formatPrice(displayPrice)}</span>
+                                                    </div>
+                                                    {product.exchangeValue > 0 && (
+                                                        <p className="mt-3 text-[15px] text-[#5f6368]">
+                                                            Upto {formatPrice(product.exchangeValue)} Off on Exchange
+                                                        </p>
+                                                    )}
+                                                </>
                                             )}
                                         </section>
 
@@ -193,7 +194,9 @@ export default function ProductDetails() {
                                             <div className="overflow-hidden rounded-2xl border border-[#ebebeb] bg-white">
                                                 <div className="bg-[#f0f7ff] px-4 py-4 flex flex-wrap items-center gap-2 text-[15px]">
                                                     <MapPin size={16} className="text-[#5f6368]" />
-                                                    <span className="font-medium text-[#212121]">Location not set</span>
+                                                    <span className="font-medium text-[#212121]">
+                                                        {profile?.address ? `${profile.address}, ${profile.city}` : 'Location not set'}
+                                                    </span>
                                                     <button type="button" className="text-[#2874f0] font-semibold">Select delivery location</button>
                                                 </div>
                                                 <div className="px-4 py-4 border-t border-[#f0f0f0] bg-[#fafafa]">
@@ -243,6 +246,7 @@ export default function ProductDetails() {
                                         price={displayPrice}
                                         onAddToCart={handleAddToCart}
                                         onBuyNow={handleBuyNow}
+                                        isOutOfStock={product.stock <= 0}
                                     />
                                 </div>
                             </div>

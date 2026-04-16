@@ -32,9 +32,9 @@ export default function Checkout() {
         fullName: `${profile.firstName || 'Jeevan'} ${profile.lastName || ''}`.trim(),
         phone: profile.mobile || '9618006235',
         email: profile.email || 'jeevanv1997@gmail.com',
-        address: 'A-5, Road-1, Sagar cements',
-        city: 'Kodad',
-        state: 'Telangana',
+        address: profile.address || 'A-5, Road-1, Sagar cements',
+        city: profile.city || 'Kodad',
+        state: profile.state || 'Telangana',
     });
 
     // Clean up buyNow state when navigating away from buy-now checkout
@@ -103,13 +103,16 @@ export default function Checkout() {
             }
         }
 
-        // Persist name, phone, email to profile (localStorage)
+        // Persist name, phone, email, and address to profile (localStorage)
         const nameParts = form.fullName.trim().split(/\s+/);
         updateProfile({
             firstName: nameParts[0] || '',
             lastName: nameParts.slice(1).join(' ') || '',
             mobile: form.phone,
             email: form.email,
+            address: form.address,
+            city: form.city,
+            state: form.state,
         });
 
         setStep(2);

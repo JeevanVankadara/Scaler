@@ -46,8 +46,6 @@ export default function CategoryContent({ category }) {
 
     // Fetch home data (with client cache)
     useEffect(() => {
-        if (category !== 'for-you') return;
-
         setHomeLoading(true);
         cachedFetch(`${API}/products/home`)
             .then((data) => {
@@ -98,7 +96,7 @@ export default function CategoryContent({ category }) {
     }, [getItemWidth]);
 
     useEffect(() => {
-        if (category !== 'for-you' || isHover) return;
+        if (isHover || posters.length <= 1) return;
         const timer = setInterval(() => {
             setCurrent((prev) => {
                 const next = (prev + 1) % posters.length;
@@ -155,6 +153,54 @@ export default function CategoryContent({ category }) {
         setIsHover(false);
     };
 
+    // ── Shared Banner Carousel ──
+    const bannerCarousel = (
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-4">
+            <div
+                className="relative"
+                onMouseEnter={() => setIsHover(true)}
+                onMouseLeave={handleMouseLeave}
+            >
+                <div
+                    ref={containerRef}
+                    className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 pt-4 pb-2
+             [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                    style={{ cursor: 'grab' }}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                >
+                    {posters.map((src, i) => (
+                        <div
+                            key={i}
+                            className="snap-start shrink-0 cursor-pointer w-[85%] sm:w-[calc((100%-2rem)/2.35)]"
+                        >
+                            <img
+                                src={src}
+                                alt={`banner-${i}`}
+                                loading="lazy"
+                                className="w-full h-32 sm:h-48 lg:h-56 object-cover rounded-xl select-none pointer-events-none"
+                                draggable={false}
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex justify-center items-center gap-1.5 pb-3 pt-1">
+                    {posters.map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => scrollToSlide(i)}
+                            className={`transition-all duration-300 h-1.5 rounded-full ${current === i ? 'w-5 bg-[#717478]' : 'w-1.5 bg-[#d1d5db] hover:bg-gray-400'
+                                }`}
+                            aria-label={`Go to slide ${i + 1}`}
+                        />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+
     // ── Other categories ──
     if (category !== 'for-you') {
         const meta = categoryMeta[category] || { name: category, bg: '#f5f5f5' };
@@ -162,6 +208,7 @@ export default function CategoryContent({ category }) {
         if (catLoading) {
             return (
                 <div className="space-y-4">
+                    {bannerCarousel}
                     {[1, 2].map((i) => (
                         <div key={i} className="bg-white rounded-xl shadow-sm p-4 animate-pulse">
                             <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
@@ -178,16 +225,19 @@ export default function CategoryContent({ category }) {
 
         if (categoryProducts.length === 0) {
             return (
-                <div className="bg-white rounded-sm shadow-sm min-h-64 flex items-center justify-center">
-                    <div className="text-center">
-                        <h2 className="text-xl font-medium">{meta.name}</h2>
-                        <p className="text-gray-500 mt-1">No products found in this category</p>
-                        <button
-                            onClick={() => navigate(`/search?category=${category}`)}
-                            className="mt-3 text-[#2874f0] text-sm font-medium hover:underline"
-                        >
-                            Browse all products →
-                        </button>
+                <div className="space-y-4">
+                    {bannerCarousel}
+                    <div className="bg-white rounded-sm shadow-sm min-h-64 flex items-center justify-center">
+                        <div className="text-center">
+                            <h2 className="text-xl font-medium">{meta.name}</h2>
+                            <p className="text-gray-500 mt-1">No products found in this category</p>
+                            <button
+                                onClick={() => navigate(`/search?category=${category}`)}
+                                className="mt-3 text-[#2874f0] text-sm font-medium hover:underline"
+                            >
+                                Browse all products →
+                            </button>
+                        </div>
                     </div>
                 </div>
             );
@@ -200,7 +250,8 @@ export default function CategoryContent({ category }) {
         }
 
         return (
-            <div>
+            <div className="space-y-4">
+                {bannerCarousel}
                 {chunks.map((chunk, idx) => (
                     <BestGadgets
                         key={idx}
@@ -222,51 +273,7 @@ export default function CategoryContent({ category }) {
     // ── For You (Home) ──
     return (
         <div>
-            {/* Banner Carousel */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div
-                    className="relative"
-                    onMouseEnter={() => setIsHover(true)}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <div
-                        ref={containerRef}
-                        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 pt-4 pb-2
-             [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                        style={{ cursor: 'grab' }}
-                        onMouseDown={handleMouseDown}
-                        onMouseMove={handleMouseMove}
-                        onMouseUp={handleMouseUp}
-                    >
-                        {posters.map((src, i) => (
-                            <div
-                                key={i}
-                                className="snap-start shrink-0 cursor-pointer w-[85%] sm:w-[calc((100%-2rem)/2.35)]"
-                            >
-                                <img
-                                    src={src}
-                                    alt={`banner-${i}`}
-                                    loading="lazy"
-                                    className="w-full h-32 sm:h-48 lg:h-56 object-cover rounded-xl select-none pointer-events-none"
-                                    draggable={false}
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex justify-center items-center gap-1.5 pb-3 pt-1">
-                        {posters.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => scrollToSlide(i)}
-                                className={`transition-all duration-300 h-1.5 rounded-full ${current === i ? 'w-5 bg-[#717478]' : 'w-1.5 bg-[#d1d5db] hover:bg-gray-400'
-                                    }`}
-                                aria-label={`Go to slide ${i + 1}`}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
+            {bannerCarousel}
 
             {/* Product Sections from API */}
             {homeLoading ? (
