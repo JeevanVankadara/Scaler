@@ -294,7 +294,7 @@ export default function CategoryContent({ category }) {
                         title={section.title}
                         bgColor={section.bgColor}
                         categoryId={section.categoryId}
-                        items={(section.products || []).slice(0, 4).map((p) => ({
+                        items={(section.products || []).map((p) => ({
                             id: p.id,
                             title: p.title,
                             subtitle: p.discountLabel || `₹${p.price.toLocaleString('en-IN')}`,
